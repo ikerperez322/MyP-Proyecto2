@@ -15,6 +15,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "aplicacion"
+version = "0.1.0"
+dependencies = [
+ "modelo",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -84,6 +91,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "modelo"
+version = "0.1.0"
+dependencies = [
+ "rusqlite",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -102,13 +116,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "proyecto2"
-version = "0.1.0"
-dependencies = [
- "rusqlite",
 ]
 
 [[package]]

@@ -1,5 +1,6 @@
 use rusqlite::Connection;
-use crate::modelo::entidades::rola::Rola;
+// use crate::modelo::entidades::rola::Rola;
+use crate::entidades::rola::Rola;
 
 pub struct RolaDao<'a> {
     conexion: &'a Connection,

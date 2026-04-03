@@ -1,5 +1,6 @@
 use rusqlite::Connection;
-use crate::modelo::entidades::group::Group;
+// use crate::modelo::entidades::group::Group;
+use crate::entidades::group::Group;
 
 pub struct GroupDao<'a> {
     conexion: &'a Connection,

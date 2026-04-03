@@ -1,5 +1,6 @@
 use rusqlite::Connection;
-use crate::modelo::entidades::album::Album;
+// use crate::modelo::entidades::album::Album;
+use crate::entidades::album::Album;
 
 pub struct AlbumDao<'a> {
     conexion: &'a Connection,

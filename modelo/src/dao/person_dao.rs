@@ -1,5 +1,6 @@
 use rusqlite::Connection;
-use crate::modelo::entidades::person::Person;
+// use crate::modelo::entidades::person::Person;
+use crate::entidades::person::Person;
 
 pub struct PersonDao<'a> {
     conexion: &'a Connection,

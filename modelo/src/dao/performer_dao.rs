@@ -1,5 +1,6 @@
 use rusqlite::Connection;
-use crate::modelo::entidades::performer::Performer;
+// use crate::modelo::entidades::performer::Performer;
+use crate::entidades::performer::Performer;
 
 //dao para tabla performers
 pub struct PerformerDao<'a> {
