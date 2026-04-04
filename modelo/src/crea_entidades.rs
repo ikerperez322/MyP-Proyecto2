@@ -1,7 +1,6 @@
 use crate::metadatos::{Artista, Cancion};
 use crate::entidades::{performer::Performer, album::Album, person::Person, group::Group, rola::Rola};
 
-
 pub struct CreaEntidades {
 
 }

@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 rusqlite = { version = "0.31.0", features = ["bundled"] }
+walkdir = "2"
+lofty = "0.22"

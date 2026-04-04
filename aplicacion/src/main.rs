@@ -1,3 +1,6 @@
+use modelo::minero::Minero;
+
 fn main() {
-    println!("Hello, world!");
+    let minero = Minero {};
+    minero.mina("/home/kralmasol/Music/pruebaMusica");
 }
