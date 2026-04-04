@@ -1,9 +1,8 @@
-use lofty::read_from_path;
-use std::path::Path;
 use walkdir::WalkDir;
-// use lofty::probe::Probe;
+use lofty::read_from_path;
 use lofty::prelude::TaggedFileExt;
 use lofty::tag::{Accessor, ItemKey, Tag, TagType};
+use std::path::Path;
 use crate::metadatos::{Album, Artista, Cancion, Grupo, Persona};
 
 pub struct Minero {
@@ -11,21 +10,22 @@ pub struct Minero {
 }
 
 impl Minero {
-
     //método que recibe un archivo raíz donde minar archivos mp3
-    pub fn mina(&self, raiz: &str) -> Result<(), Box<dyn::std::error::Error>> {
-        for archivo in WalkDir::new(raiz).into_iter().filter_map(|e| e.ok()) {
+    pub fn mina(&self, raiz: &str) -> Result<Vec<Cancion>, Box<dyn::std::error::Error>> {
 
+        let mut canciones: Vec<Cancion> = Vec::new();
+        
+        for archivo in WalkDir::new(raiz).into_iter().filter_map(|e| e.ok()) {
             let path = archivo.path();
             
             if archivo.file_type().is_file() {
                 if let Some(extension) = path.extension() {
                     if extension == "mp3" {
                         if let Ok(archivo_tagged) = read_from_path(path) {
-                            
                             if let Some(tag) = archivo_tagged.tag(TagType::Id3v2) {
                                 let cancion = Self::analiza_cancion(tag, path);
                                 println!("Canción:\n{:#?}", cancion);
+                                canciones.push(cancion);
                                 // println!("Canción: {:?}", cancion);
                             } else {
                                 println!("Archivo SIN ID3v2: {}", path.display());
@@ -35,7 +35,7 @@ impl Minero {
                 }
             }
         }
-        return Ok(());
+        return Ok(canciones);
     }
 
     //Regresa los metadatos del archivo analizado
@@ -43,9 +43,14 @@ impl Minero {
         let art = Self::analiza_artista(etiqueta);
         let tipo_art = Self::tipo_artista(&art);
         let cancion = Cancion {
+            //para el título primero se intenta con la etiqueta, en caso de no encontrar nada usa el nombre del archivo por omisión
             titulo: match &etiqueta.title() {
                 Some(tit) => tit.to_string(),
-                None => String::from("Desconocido"),
+                None => match direccion.file_name() {
+                    Some(dir) => dir.to_string_lossy().into_owned().replace(".mp3", ""),
+                    //teoricamente esto pasaría solo en casos realmente excepcionales
+                    None => String::from("Desconocido"),
+                },
             },
             path: direccion.to_string_lossy().into_owned(),
             artista: art,
