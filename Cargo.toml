@@ -1,4 +1,4 @@
 [workspace]
-members = ["modelo", "aplicacion"]
+members = ["modelo", "aplicacion", "vista"]
 resolver = "3"
 

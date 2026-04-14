@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+
+  <!-- Ventana principal -->
+  <object class="GtkApplicationWindow" id="main_window">
+    <property name="title">Reproductor</property>
+    <property name="default-width">900</property>
+    <property name="default-height">600</property>
+
+    <child>
+      <!-- división horizontal entre ambos lados de la pantalla -->
+      <object class="GtkPaned">
+        <property name="orientation">horizontal</property>
+
+        <!-- reproductor (lado izquierdo) -->
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <property name="spacing">10</property>
+            <property name="margin-top">10</property>
+            <property name="margin-start">10</property>
+	    <property name="margin-end">10</property>
+	    <property name="margin-bottom">10</property>
+
+
+	    <child>
+	      <object class="GtkBox">
+		<property name="orientation">vertical</property>
+		<property name="spacing">10</property>
+		<property name="vexpand">true</property>
+
+		<!-- imagen de la canción -->
+		<child>
+		  <object class="GtkImage" id="cover_image">
+		    <property name="pixel-size">200</property>
+		  </object>
+		</child>
+
+		<!-- nombre de la canción -->
+		<child>
+		  <object class="GtkLabel" id="song_label">
+		    <property name="label">No hay canción</property>
+		  </object>
+		</child>
+
+	      </object>
+	    </child>
+
+	    <!-- barra de progreso de la canción -->
+	    <child>
+	      <object class="GtkScale" id="progress_bar">
+		<property name="orientation">horizontal</property>
+		<property name="draw-value">true</property>
+	      </object>
+	    </child>
+
+	    
+            <!-- botones -->
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+		<property name="halign">center</property>
+
+                <child>
+                  <object class="GtkButton" id="play_button">
+                    <property name="label">▶</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkButton" id="pause_button">
+                    <property name="label">⏸</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkButton" id="next_button">
+                    <property name="label">⏭</property>
+                  </object>
+                </child>
+
+              </object>
+            </child>
+
+	  </object>
+	</child>
+        <!-- <!-\- barra de progreso para la reproducción de música -\-> -->
+        <!-- <child> -->
+        <!--   <object class="GtkScale" id="progress_bar"> -->
+        <!--     <property name="orientation">horizontal</property> -->
+        <!--     <property name="draw-value">false</property> -->
+        <!--   </object> -->
+        <!-- </child> -->
+
+        <!--     <!-\- nombre de la canción en reproducción -\-> -->
+        <!--     <child> -->
+        <!--       <object class="GtkLabel" id="song_label"> -->
+        <!--         <property name="label">No hay canción</property> -->
+        <!--       </object> -->
+        <!--     </child> -->
+
+        <!--   </object> -->
+        <!-- </child> -->
+
+        <!-- lado derecho de la pantalla (archivos mp3) -->
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+
+            <!-- para cambiar vistas -->
+            <child>
+              <object class="GtkStack" id="biblioteca_stack">
+                
+                <!-- Vista con imagenes -->
+                <child>
+                  <object class="GtkFlowBox" id="grid_view">
+                    <property name="valign">start</property>
+                  </object>
+                </child>
+
+                <!-- vista tipo tabla -->
+                <child>
+                  <object class="GtkBox" id="table_view">
+                    <property name="orientation">vertical</property>
+                  </object>
+                </child>
+
+              </object>
+            </child>
+
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+  </object>
+</interface>

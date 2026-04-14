@@ -118,8 +118,7 @@ impl Minero {
                 }
             }
         }
-    }
-    
+    }    
 }
 
 // #[cfg(test)]
@@ -145,5 +144,4 @@ impl Minero {
 //         }
 //     }
 // }
-
 
