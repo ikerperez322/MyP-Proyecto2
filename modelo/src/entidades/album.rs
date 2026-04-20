@@ -1,7 +1,7 @@
 //representa Album de la BD a un alto nivel
 pub struct Album {
-    pub id: Option<u32>,
+    pub id: Option<i64>,
     pub path: String,
     pub name: String,
-    pub year: u32,
+    pub year: i64,
 }

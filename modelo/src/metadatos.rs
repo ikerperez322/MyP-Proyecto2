@@ -12,12 +12,12 @@ pub struct Cancion {
     //el primer atributo representa persona (None si es grupo), el segundo representa el grupo (None si es persona)
     pub artista: Artista<Persona, Grupo>,
     pub album: Album,
-    pub track: Option<u32>,
-    pub agno: Option<u32>,
+    pub track: Option<i64>,
+    pub agno: Option<i64>,
     pub genero: Option<String>,
     // pub agno_album: Option<i32>,
     //0 persona, 1 grupo, 2 desconocido
-    pub tipo_artista: u32,
+    pub tipo_artista: i64,
 }
 
 #[derive(Debug)]
@@ -45,7 +45,7 @@ pub enum Artista<T, U> {
 pub struct Album {
     pub path: String,
     pub nombre: Option<String>,
-    pub agno: Option<u32>,
+    pub agno: Option<i64>,
 }
 
 
