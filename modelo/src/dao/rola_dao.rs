@@ -12,10 +12,11 @@ impl<'a> RolaDao<'a> {
     }
 
     //agrega a la tabla rolas, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
-    pub fn agregar(&self, rola: &Rola) -> rusqlite::Result<()> {
+    pub fn agregar(&self, rola: &Rola) -> rusqlite::Result<i64> {
         self.conexion.execute("INSERT INTO rolas (id_performer, id_album, path, title, track, year, genre) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
             (&rola.id_performer, &rola.id_album, &rola.path, &rola.title, &rola.track, &rola.year, &rola.genre,),)?;
-        return Ok(());
+        // return Ok(());
+        return Ok(self.conexion.last_insert_rowid());
     }
 
     //busca una rola por su path, en caso de que no exista regresa None, regresa Err si falló el sql

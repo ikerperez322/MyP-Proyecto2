@@ -10,6 +10,11 @@ pub struct Minero {
 }
 
 impl Minero {
+
+    pub fn new() -> Self {
+        return Self {  };
+    }
+    
     //método que recibe un archivo raíz donde minar archivos mp3
     pub fn mina(&self, raiz: &str) -> Result<Vec<Cancion>, Box<dyn::std::error::Error>> {
 
@@ -55,8 +60,8 @@ impl Minero {
             path: direccion.to_string_lossy().into_owned(),
             artista: art,
             album: Self::analiza_album(etiqueta, direccion),
-            track: etiqueta.track(),
-            agno: etiqueta.year(),
+            track: etiqueta.track().map(|x| x as i64),
+            agno: etiqueta.year().map(|x| x as i64),
             genero: match &etiqueta.genre() {
                 Some(genro) => Some(genro.to_string()),
                 None => None,
@@ -101,13 +106,13 @@ impl Minero {
                 None => None,
             },
             //por omision tomamos el año de la canción como año del album ya que Id3v2 no distingue entre ambos
-            agno: etiqueta.year(),
+            agno: etiqueta.year().map(|x| x as i64),
         };
         return album;
     }
 
     //regresa el tipo de artista (en número dependiendo de la variante del enum Artista)
-    fn tipo_artista(artista: &Artista<Persona, Grupo>) -> u32 {
+    fn tipo_artista(artista: &Artista<Persona, Grupo>) -> i64 {
         match artista {
             Artista::Grupo(_) => return 1,
             Artista::Persona(p) => {
