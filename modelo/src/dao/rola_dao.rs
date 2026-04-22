@@ -1,5 +1,7 @@
 use rusqlite::Connection;
+use crate::rola_vista::RolaVista;
 // use crate::modelo::entidades::rola::Rola;
+
 use crate::entidades::rola::Rola;
 
 pub struct RolaDao<'a> {
@@ -142,7 +144,29 @@ impl<'a> RolaDao<'a> {
         )?;
         return Ok(filas);
     }
+
+    pub fn obtener_todas_canciones_vista(&self) -> rusqlite::Result<Vec<RolaVista>> {
+        let mut stmt = self.conexion.prepare("
+        SELECT r.title, p.name, a.name
+        FROM rolas r
+        JOIN performers p ON r.id_performer = p.id_performer
+        JOIN albums a ON r.id_album = a.id_album
+    ")?;
+        
+        let columnas = stmt.query_map([], |col| {
+            Ok(RolaVista {
+                titulo: col.get(0)?,
+                artista: col.get(1)?,
+                album: col.get(2)?,
+            })
+        })?;
+        
+        let mut canciones = Vec::new();
+        for r in columnas {
+            canciones.push(r?);
+        }
+        
+        return Ok(canciones);
+    }
 }
-
-
 

@@ -86,24 +86,6 @@
 
 	  </object>
 	</child>
-        <!-- <!-\- barra de progreso para la reproducción de música -\-> -->
-        <!-- <child> -->
-        <!--   <object class="GtkScale" id="progress_bar"> -->
-        <!--     <property name="orientation">horizontal</property> -->
-        <!--     <property name="draw-value">false</property> -->
-        <!--   </object> -->
-        <!-- </child> -->
-
-        <!--     <!-\- nombre de la canción en reproducción -\-> -->
-        <!--     <child> -->
-        <!--       <object class="GtkLabel" id="song_label"> -->
-        <!--         <property name="label">No hay canción</property> -->
-        <!--       </object> -->
-        <!--     </child> -->
-
-        <!--   </object> -->
-        <!-- </child> -->
-
         <!-- lado derecho de la pantalla (archivos mp3) -->
         <child>
           <object class="GtkBox">
@@ -114,12 +96,29 @@
               <object class="GtkStack" id="biblioteca_stack">
                 
                 <!-- Vista con imagenes -->
-                <child>
-                  <object class="GtkFlowBox" id="grid_view">
-                    <property name="valign">start</property>
-                  </object>
-                </child>
+                <!-- <child> -->
+                <!--   <object class="GtkFlowBox" id="grid_view"> -->
+                <!--     <property name="valign">start</property> -->
+                <!--   </object> -->
+                <!-- </child> -->
 
+		<child>
+		  <object class="GtkScrolledWindow">
+		    <property name="vexpand">true</property>
+
+		    <child>
+		      <object class="GtkFlowBox" id="grid_view">
+			<property name="row-spacing">10</property>
+			<property name="column-spacing">10</property>
+			<property name="valign">start</property>
+			<property name="max-children-per-line">4</property>
+			<property name="selection-mode">none</property>
+		      </object>
+		    </child>
+
+		  </object>
+		</child>
+		
                 <!-- vista tipo tabla -->
                 <child>
                   <object class="GtkBox" id="table_view">

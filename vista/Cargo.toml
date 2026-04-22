@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 gtk = { package = "gtk4", version = "0.8" }
+rusqlite = { version = "0.31.0", features = ["bundled"] }
+controlador = {path = "../controlador"}

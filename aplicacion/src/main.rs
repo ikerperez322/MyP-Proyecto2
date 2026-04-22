@@ -2,10 +2,12 @@ use gtk::prelude::*;
 use gtk::Application;
 use rusqlite::Connection;
 use std::path::Path;
-use modelo::minero::Minero;
-use modelo::manejador_dao::ManejadorDao;
+// use modelo::minero::Minero;
+// use modelo::manejador_dao::ManejadorDao;
 use controlador::controlador::Controlador;
 use modelo::dao::rola_dao::RolaDao;
+// use vista::Vista;
+use vista::builder;
 
 fn main() -> Result<(), Box<dyn::std::error::Error>> {
     // let minero = Minero {};
@@ -40,10 +42,10 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
         conn.execute_batch(esquema)?;
     }
     
-    let servicio = ManejadorDao::new(&conn);
-    let minero = Minero::new();
+    // let servicio = ManejadorDao::new(&conn);
+    // let minero = Minero::new();
     
-    let controlador = Controlador::new(servicio, minero);
+    let controlador = Controlador::new(&conn);
 
     controlador.poblar_bd("/home/kralmasol/Music/pruebaMusica")?;
 
@@ -59,16 +61,26 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
             println!("Canción:\n{:#?}", rolita);
         }
     }
-    
-    // let aplicacion = gtk::Application::builder().application_id("com.reproductor").build();
 
-    // aplicacion.connect_activate(|app| {
-    //     let vista = vista::Vista::new(app);
+    let app = Application::new(
+        Some("com.ejemplo.reproductor"),
+        Default::default(),
+    );
 
-    //     vista.window.show();
-    // });
+    app.connect_activate(move |app| {
 
-    // aplicacion.run();
+        // let conexion = rusqlite::Connection::open("db.sqlite")
+        //     .expect("No se pudo abrir la BD");
+
+        let controlador = Controlador::new(&conn);
+
+        if let Err(e) = builder::crea_ui(app, &controlador) {
+            eprintln!("Error al crear UI: {}", e);
+        }
+    });
+
+    app.run();
 
     return Ok(());
+    
 }
