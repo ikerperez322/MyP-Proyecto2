@@ -13,6 +13,7 @@ impl<'a> RolaDao<'a> {
 
     //agrega a la tabla rolas, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
     pub fn agregar(&self, rola: &Rola) -> rusqlite::Result<i64> {
+        // println!("Insertando rola...");
         self.conexion.execute("INSERT INTO rolas (id_performer, id_album, path, title, track, year, genre) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
             (&rola.id_performer, &rola.id_album, &rola.path, &rola.title, &rola.track, &rola.year, &rola.genre,),)?;
         // return Ok(());
@@ -20,7 +21,7 @@ impl<'a> RolaDao<'a> {
     }
 
     //busca una rola por su path, en caso de que no exista regresa None, regresa Err si falló el sql
-    pub fn buscar_por_path(&self, path: &str) -> rusqlite::Result<Option<Rola>> {
+    pub fn buscar_por_path(&self, path: &str) -> rusqlite::Result<Option<Rola>> {        
         let mut stmt = self.conexion.prepare("SELECT id_rola, id_performer, id_album, path, title, track, year, genre FROM rolas WHERE path = ?1")?;
         let mut colummnas = stmt.query([path])?;
 
@@ -33,7 +34,7 @@ impl<'a> RolaDao<'a> {
                 title: (col.get(4)?),
                 track: (col.get(5)?),
                 year: (col.get(6)?),
-                genre: (col.get(8)?)
+                genre: (col.get(7)?)
             }));
         }else {
             return Ok(None);
@@ -54,11 +55,11 @@ impl<'a> RolaDao<'a> {
                 title: (col.get(4)?),
                 track: (col.get(5)?),
                 year: (col.get(6)?),
-                genre: (col.get(8)?)
+                genre: (col.get(7)?)
             }));
         }else {
             return Ok(None);
-        }
+        }        
     }
 
     //busca una rola por su track, en caso de que no exista regresa None, regresa Err si falló el sql
@@ -75,7 +76,7 @@ impl<'a> RolaDao<'a> {
                 title: (col.get(4)?),
                 track: (col.get(5)?),
                 year: (col.get(6)?),
-                genre: (col.get(8)?)
+                genre: (col.get(7)?)
             }));
         }else {
             return Ok(None);
@@ -96,7 +97,7 @@ impl<'a> RolaDao<'a> {
                 title: (col.get(4)?),
                 track: (col.get(5)?),
                 year: (col.get(6)?),
-                genre: (col.get(8)?)
+                genre: (col.get(7)?)
             }));
         }else {
             return Ok(None);
@@ -117,7 +118,7 @@ impl<'a> RolaDao<'a> {
                 title: (col.get(4)?),
                 track: (col.get(5)?),
                 year: (col.get(6)?),
-                genre: (col.get(8)?)
+                genre: (col.get(7)?)
             }));
         }else {
             return Ok(None);

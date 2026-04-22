@@ -15,6 +15,7 @@ impl<'a> PerformerDao<'a> {
 
     //agrega a la tabla performer, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
     pub fn agregar(&self, performer: &Performer) -> rusqlite::Result<i64> {
+        // println!("Insertando performer...");
         self.conexion.execute("INSERT INTO performers (id_type, name) VALUES (?1, ?2)",
             (&performer.id_type, &performer.name,),)?;
         return Ok(self.conexion.last_insert_rowid());

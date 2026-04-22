@@ -31,7 +31,7 @@ impl<'a> ManejadorDao<'a> {
         let rola = Rola {
             id: None,
             id_performer: Self::resolver_artista(&self, cancion)?,
-            id_album: Self::resolver_album(&self, cancion)?,
+            id_album: Self::resolver_album(&self, cancion)?,            
             path: cancion.path.clone(),
             title: cancion.titulo.clone(),
             track: match cancion.track {
@@ -53,33 +53,30 @@ impl<'a> ManejadorDao<'a> {
         return Ok(id);        
     }
 
-    pub fn agrega_performer(&self, artista: &Artista<Persona,
-        Grupo>) -> Result<i64, Box<dyn::std::error::Error>> {
-            let (nombre, tipo) = match &artista {
-                Artista::Persona(p) => (p.nombre_artistico.as_ref(), 0),
-                Artista::Grupo(g) => (g.nombre.as_ref(), 1),
-            };
+    pub fn agrega_performer(&self, artista: &Artista<Persona, Grupo>) -> Result<i64, Box<dyn::std::error::Error>> {
+        let (nombre, tipo) = match &artista {
+            Artista::Persona(p) => (p.nombre_artistico.as_ref(), 0),
+            Artista::Grupo(g) => (g.nombre.as_ref(), 1),
+        };
 
-            let nombre = nombre.ok_or(rusqlite::Error::InvalidQuery)?;
+        let nombre = nombre.ok_or(rusqlite::Error::InvalidQuery)?;
             
-            if let Some(performer) = self.performer_dao.buscar_por_nombre_tipo(nombre, tipo)? {
-                if let Some(id) = performer.id {
-                    return Ok(id);
-                }
+        if let Some(performer) = self.performer_dao.buscar_por_nombre_tipo(nombre, tipo)? {
+            if let Some(id) = performer.id {
+                return Ok(id);
             }
-
-            let performer = Performer {
-                id: None,
-                id_type: tipo,
-                name: nombre.to_string(),
-            };
-
-            let id = self.performer_dao.agregar(&performer)?;
-
-            return Ok(id);
         }
 
-    
+        let performer = Performer {
+            id: None,
+            id_type: tipo,
+            name: nombre.to_string(),
+        };
+
+        let id = self.performer_dao.agregar(&performer)?;
+
+        return Ok(id);
+    }
     
     //regresa el id del artista, puede que ya exista en la tabla performers, en caso de que sea un nuevo performer lo agrega a la tabla performers
     fn resolver_artista(&self, cancion: &Cancion) -> Result<i64, Box<dyn::std::error::Error>> {
@@ -87,7 +84,7 @@ impl<'a> ManejadorDao<'a> {
             Artista::Persona(p) => (p.nombre_artistico.as_ref(), 0),
             Artista::Grupo(g) => (g.nombre.as_ref(), 1),
         };
-
+        
         let nombre = nombre.ok_or(rusqlite::Error::InvalidQuery)?;
 
         if let Some(performer) = self.performer_dao.buscar_por_nombre_tipo(nombre, tipo)? {
@@ -104,7 +101,7 @@ impl<'a> ManejadorDao<'a> {
 
         //deberia de regresar el id
         let id = self.performer_dao.agregar(&nuevo)?;
-
+        
         return Ok(id);
     }
 

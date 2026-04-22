@@ -17,7 +17,6 @@ impl Minero {
     
     //método que recibe un archivo raíz donde minar archivos mp3
     pub fn mina(&self, raiz: &str) -> Result<Vec<Cancion>, Box<dyn::std::error::Error>> {
-
         let mut canciones: Vec<Cancion> = Vec::new();
         
         for archivo in WalkDir::new(raiz).into_iter().filter_map(|e| e.ok()) {
@@ -64,7 +63,7 @@ impl Minero {
             agno: etiqueta.year().map(|x| x as i64),
             genero: match &etiqueta.genre() {
                 Some(genro) => Some(genro.to_string()),
-                None => None,
+                None => Some(String::from("Desconocido")),
             },
             tipo_artista: tipo_art,
         };
@@ -76,23 +75,23 @@ impl Minero {
         if let Some(grupo) = etiqueta.get_string(&ItemKey::AlbumArtist) {
             return Artista::Grupo(Grupo {
                 nombre: Some(grupo.to_string()),
-                fecha_inicio: None,
-                fecha_separacion: None,
+                fecha_inicio: Some(String::from("Desconocido")),
+                fecha_separacion: Some(String::from("Desconocido")),
             });
         }else if let Some(persona) = etiqueta.artist() {
             return Artista::Persona(Persona{
                 nombre_artistico: Some(persona.to_string()),
-                nombre_real: None,
-                fecha_nacimiento: None,
-                fecha_fallecimiento: None,
+                nombre_real: Some(String::from("Desconocido")),
+                fecha_nacimiento: Some(String::from("Desconocido")),
+                fecha_fallecimiento: Some(String::from("Desconocido")),
             });
             //en caso de no distinguir, se usa persona por omisión
         }else {
             return Artista::Persona(Persona {
-                nombre_artistico: None,
-                nombre_real: None,
-                fecha_nacimiento: None,
-                fecha_fallecimiento: None,
+                nombre_artistico: Some(String::from("Desconocido")),
+                nombre_real: Some(String::from("Desconocido")),
+                fecha_nacimiento: Some(String::from("Desconocido")),
+                fecha_fallecimiento: Some(String::from("Desconocido")),
             });
         }
     }
@@ -103,7 +102,7 @@ impl Minero {
             path: direccion.to_string_lossy().into_owned(),
             nombre: match etiqueta.album() {
                 Some(alb) => Some(alb.to_string()),
-                None => None,
+                None => Some(String::from("Desconocido")),
             },
             //por omision tomamos el año de la canción como año del album ya que Id3v2 no distingue entre ambos
             agno: etiqueta.year().map(|x| x as i64),

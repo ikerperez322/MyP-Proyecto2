@@ -20,8 +20,14 @@ impl <'a> Controlador<'a> {
 
         for cancion in canciones {
             match self.manejador.agrega_rola(&cancion) {
-                Ok(id) => println!("Insertada canción con id {}", id),
-                Err(e) => eprintln!("Error insertando canción: {}", e),
+                Ok(id) => {
+                    println!("Insertada canción con id {}", id);
+                    // println!("Canción:\n{:#?}", cancion);
+                },
+                Err(e) => {
+                    eprintln!("Error insertando canción: {}", e);
+                    // println!("Canción:\n{:#?}", cancion);
+                },
             }
         }
 

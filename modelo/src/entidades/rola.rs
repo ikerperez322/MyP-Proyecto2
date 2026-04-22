@@ -1,4 +1,5 @@
 //representa Rola de la BD a un alto nivel
+#[derive(Debug)]
 pub struct Rola {
     pub id: Option<i64>,
     pub id_performer: i64,

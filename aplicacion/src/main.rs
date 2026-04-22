@@ -47,8 +47,18 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
 
     controlador.poblar_bd("/home/kralmasol/Music/pruebaMusica")?;
 
-    // let dao_rola = RolaDao::new(&conn);
-    // dao_rola.buscar_por_titulo("amiga")?;
+    let dao_rola = RolaDao::new(&conn);
+    if let Ok(rola) = dao_rola.buscar_por_titulo("American pie") {
+        if let Some(rolita) = rola {
+            println!("Canción:\n{:#?}", rolita);
+        }
+    }
+
+    if let Ok(rola) = dao_rola.buscar_por_titulo("Voices. Vangelis") {
+        if let Some(rolita) = rola {
+            println!("Canción:\n{:#?}", rolita);
+        }
+    }
     
     // let aplicacion = gtk::Application::builder().application_id("com.reproductor").build();
 

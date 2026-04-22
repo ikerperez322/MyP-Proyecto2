@@ -14,6 +14,7 @@ impl<'a> AlbumDao<'a> {
 
     //agrega a la tabla album, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
     pub fn agregar(&self, album: &Album) -> rusqlite::Result<i64> {
+        // println!("Insertando album...");
         self.conexion.execute("INSERT INTO albums (path, name, year) VALUES (?1, ?2, ?3)",
             (&album.path, &album.name, &album.year,),)?;
         return Ok(self.conexion.last_insert_rowid());
@@ -22,7 +23,7 @@ impl<'a> AlbumDao<'a> {
     //regresa un album por su path, en caso de que no exista regresa None, regresa Err si falló el sql
     pub fn buscar_por_path(&self, path: &str) -> rusqlite::Result<Option<Album>> {
         let mut stmt = self.conexion.prepare("SELECT id_album, path, name, year FROM albums WHERE path = ?1")?;
-        let mut columnas = stmt.query([path])?;
+        let mut columnas = stmt.query(params![path])?;
 
         if let Some(col) = columnas.next()? {
             return Ok(Some(Album {
@@ -39,7 +40,7 @@ impl<'a> AlbumDao<'a> {
     //regresa un album por su nombre, en caso de que no exista regresa None, regresa Err si falló el sql
     pub fn buscar_por_nombre(&self, nombre: &str) -> rusqlite::Result<Option<Album>> {
         let mut stmt = self.conexion.prepare("SELECT id_album, path, name, year FROM albums WHERE name = ?1")?;
-        let mut columnas = stmt.query([nombre])?;
+        let mut columnas = stmt.query(params![nombre])?;
 
         if let Some(col) = columnas.next()? {
             return Ok(Some(Album {
@@ -56,7 +57,7 @@ impl<'a> AlbumDao<'a> {
     //regresa un album por su año, en caso de que no exista regresa None, regresa Err si falló el sql
     pub fn buscar_por_agno(&self, agno: i64) -> rusqlite::Result<Option<Album>> {
         let mut stmt = self.conexion.prepare("SELECT id_album, path, name, year FROM albums WHERE year = ?1")?;
-        let mut columnas = stmt.query([agno])?;
+        let mut columnas = stmt.query(params![agno])?;
 
         if let Some(col) = columnas.next()? {
             return Ok(Some(Album {
@@ -84,7 +85,7 @@ impl<'a> AlbumDao<'a> {
             }));
         }else {
             return Ok(None);
-        }
+        }        
     }
 
     //elimina un album por su id
