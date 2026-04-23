@@ -19,15 +19,15 @@ pub fn construir(app: &Application, controlador: &Controlador) -> rusqlite::Resu
         
     let (right_box, stack, flowbox, column_view) = crear_panel_biblioteca();
     paned.set_end_child(Some(&right_box));
-        
+
+    paned.set_position(300);
+    
     let _reproductor = Reproductor::new(left_box);
     let biblioteca = Biblioteca::new(flowbox, column_view);
         
     let canciones = controlador.obtener_canciones()?;
     biblioteca.cargar_en_flowbox(&canciones);
-    biblioteca.configurar_tabla(canciones);
         
-    configurar_botones_vista(&right_box, stack);
         
     window.present();
     
@@ -145,6 +145,6 @@ fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView) {
     return (right_box, stack, flowbox, column_view);
 }
 
-fn configurar_botones_vista(_right_box: &Box, _stack: Stack) {
+// fn configurar_botones_vista(_right_box: &Box, _stack: Stack) {
 
-}
+// }

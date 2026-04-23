@@ -1,4 +1,3 @@
-
 //struct para guardar los datos que se van a mostrar en la vista
 pub struct CancionVista {
     pub titulo: String,
