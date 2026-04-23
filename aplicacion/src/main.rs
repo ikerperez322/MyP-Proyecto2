@@ -7,7 +7,7 @@ use std::path::Path;
 use controlador::controlador::Controlador;
 use modelo::dao::rola_dao::RolaDao;
 // use vista::Vista;
-use vista::builder;
+// use vista::builder;
 
 fn main() -> Result<(), Box<dyn::std::error::Error>> {
     // let minero = Minero {};
@@ -62,25 +62,36 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
         }
     }
 
-    let app = Application::new(
-        Some("com.ejemplo.reproductor"),
-        Default::default(),
-    );
-
+    gtk::init()?;
+    
+    // Crear la aplicación
+    let app = Application::builder()
+        .application_id("com.reproductor.app")
+        .build();
+    
+    // Conectar la señal activate
     app.connect_activate(move |app| {
-
-        // let conexion = rusqlite::Connection::open("db.sqlite")
-        //     .expect("No se pudo abrir la BD");
-
-        let controlador = Controlador::new(&conn);
-
-        if let Err(e) = builder::crea_ui(app, &controlador) {
-            eprintln!("Error al crear UI: {}", e);
+        if let Err(e) = run_app(app, &conn) {
+            eprintln!("Error al iniciar la aplicación: {}", e);
         }
     });
-
+    
+    // Ejecutar la aplicación
     app.run();
+    
 
     return Ok(());
     
 }
+
+
+fn run_app(app: &Application, conexion: &Connection)-> Result<(), Box<dyn std::error::Error>> {
+    // Inicializar controlador (ajusta según tu implementación)
+    let controlador = Controlador::new(&conexion);
+    
+    // Iniciar la interfaz desde la librería vista
+    vista::iniciar(app, &controlador)?;
+    
+    Ok(())
+}
+

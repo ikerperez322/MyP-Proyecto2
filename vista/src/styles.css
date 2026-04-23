@@ -1,0 +1,77 @@
+/* Estilos generales */
+window {
+    background-color: #2b2b2b;
+}
+
+/* Tarjetas de la vista Grid */
+.card {
+    background-color: #3c3c3c;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover {
+    background-color: #4a4a4a;
+    transition: background-color 0.2s;
+}
+
+.card-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 5px;
+}
+
+.card-artist {
+    font-size: 10px;
+    color: #b0b0b0;
+}
+
+.card-album {
+    font-size: 9px;
+    color: #808080;
+}
+
+/* Botones */
+.view-button {
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+.view-button:hover {
+    background-color: #5a5a5a;
+}
+
+.play-button, .pause-button, .next-button {
+    background-color: #3c3c3c;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.play-button:hover, .pause-button:hover, .next-button:hover {
+    background-color: #4a4a4a;
+}
+
+/* Título de canción */
+.song-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Scrollbar */
+scrollbar {
+    background-color: #2b2b2b;
+}
+
+scrollbar slider {
+    background-color: #5a5a5a;
+    border-radius: 8px;
+}

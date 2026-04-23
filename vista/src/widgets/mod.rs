@@ -1,2 +1,7 @@
-pub mod biblioteca;
-pub mod reproductor;
+mod biblioteca;
+mod reproductor;
+
+pub use biblioteca::Biblioteca;
+pub use reproductor::Reproductor;
+
+

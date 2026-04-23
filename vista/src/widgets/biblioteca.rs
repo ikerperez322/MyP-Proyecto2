@@ -1,51 +1,68 @@
 use gtk::prelude::*;
-use gtk::{Label, Orientation, Image, Box};
-use gtk::{Builder, Stack};
+use gtk::{FlowBox, ColumnView, Box, Label, Image, Orientation, ScrolledWindow, SingleSelection};
+// use gtk::gio::ListStore;
 use controlador::cancion_vista::CancionVista;
 
 pub struct Biblioteca {
-    pub stack: Stack,
-    pub flow: gtk::FlowBox,
+    flowbox: FlowBox,
+    column_view: ColumnView,
 }
 
 impl Biblioteca {
-    pub fn new(builder: &Builder) -> Self {
+    pub fn new(flowbox: FlowBox, column_view: ColumnView) -> Self {
         Self {
-            stack: builder.object("biblioteca_stack").unwrap(),
-            flow: builder.object("grid_view").unwrap(),
+            flowbox,
+            column_view,
         }
     }
-
-    pub fn cargar_en_flowbox(&self, canciones: Vec<CancionVista>) {
-        for rola in canciones {
-            let card = Self::crear_card(&rola);
-            self.flow.insert(&card, -1);
+    
+    pub fn cargar_en_flowbox(&self, canciones: &[CancionVista]) {
+        // self.flowbox.remove_all();
+        
+        for cancion in canciones {
+            let card = Self::crear_card(cancion);
+            self.flowbox.insert(&card, -1);
         }
     }
-
-    pub fn crear_card(cancion: &CancionVista) -> gtk::Box {
+    
+    fn crear_card(cancion: &CancionVista) -> Box {
         let card = Box::new(Orientation::Vertical, 5);
         card.set_margin_top(10);
         card.set_margin_bottom(10);
         card.set_margin_start(10);
         card.set_margin_end(10);
+        card.add_css_class("card");
         
-        let imagen = Image::from_icon_name("media-optical-symbolic");
-
+        // Imagen
+        let imagen = Image::from_icon_name("audio-x-generic-symbolic");
+        imagen.set_pixel_size(120);
+        
+        // Título
         let titulo = Label::new(Some(&cancion.titulo));
         titulo.set_wrap(true);
         titulo.set_max_width_chars(20);
+        titulo.add_css_class("card-title");
         
-        let album = Label::new(Some(&cancion.album));
+        // Artista
         let artista = Label::new(Some(&cancion.artista));
-
+        artista.add_css_class("card-artist");
+        
+        // Álbum
+        let album = Label::new(Some(&cancion.album));
+        album.add_css_class("card-album");
+        
         card.append(&imagen);
         card.append(&titulo);
-        card.append(&album);
         card.append(&artista);
-        
-        card.add_css_class("card");
+        card.append(&album);
         
         return card;
-    }      
+    }
+    
+    pub fn configurar_tabla(&self, canciones: Vec<CancionVista>) {
+        // Aquí irá la configuración de la tabla
+        println!("Configurando tabla con {} canciones", canciones.len());
+        
+        
+    }
 }

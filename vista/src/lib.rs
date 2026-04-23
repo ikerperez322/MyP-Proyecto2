@@ -1,36 +1,30 @@
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow};
-
-pub mod builder;
-pub mod widgets;
-
-// use builder::cargar_ui;
-use widgets::reproductor::Reproductor;
-use widgets::biblioteca::Biblioteca;
-
+use gtk::{Application, CssProvider, StyleContext};
+use gtk::gdk::Display;
 use controlador::controlador::Controlador;
 
-pub struct Vista {
-    pub window: ApplicationWindow,
-    pub reproductor: Reproductor,
-    pub biblioteca: Biblioteca,
+pub mod widgets;
+pub mod ui;
+
+pub fn iniciar(app: &Application, controlador: &Controlador) -> Result<(), Box<dyn std::error::Error>> {
+    // cargar el css
+    cargar_css()?;
+    
+    // construir la gui
+    ui::construir(app, controlador)?;
+    
+    return Ok(());
 }
 
-// impl Vista {
-//     pub fn new(app: &Application, controlador: &Controlador) -> Self {
-//         // let builder = cargar_ui(controlador);
-
-//         let window: ApplicationWindow = builder.object("main_window").unwrap();
-
-//         window.set_application(Some(app));
-
-//         let reproductor = Reproductor::new(&builder);
-//         let biblioteca = Biblioteca::new(&builder);
-
-//         return Self {
-//             window,
-//             reproductor,
-//             biblioteca,
-//         };
-//     }
-// }
+fn cargar_css() -> Result<(), Box<dyn std::error::Error>> {
+    let provider = CssProvider::new();
+    provider.load_from_data(include_str!("styles.css"));
+    
+    StyleContext::add_provider_for_display(
+        &Display::default().unwrap(),
+        &provider,
+        gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+    );
+    
+    return Ok(());
+}

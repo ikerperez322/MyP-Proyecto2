@@ -56,7 +56,7 @@ impl <'a> Controlador<'a> {
         let mut canciones_vista: Vec<CancionVista> = Vec::new();
         
         for cancion in canciones_bd {
-            let rola = CancionVista::new(cancion.titulo, cancion.artista, cancion.album);
+            let rola = CancionVista::new(cancion.titulo, cancion.artista, cancion.album, cancion.genero);
             canciones_vista.push(rola);
         }
         
