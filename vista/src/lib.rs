@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use gtk::prelude::*;
 use gtk::{Application, CssProvider, StyleContext};
 use gtk::gdk::Display;
@@ -6,7 +8,7 @@ use controlador::controlador::Controlador;
 pub mod widgets;
 pub mod ui;
 
-pub fn iniciar(app: &Application, controlador: &Controlador) -> Result<(), Box<dyn std::error::Error>> {
+pub fn iniciar(app: &Application, controlador: Rc<RefCell<Controlador>>) -> Result<(), Box<dyn std::error::Error>> {
     // cargar el css
     cargar_css()?;
     

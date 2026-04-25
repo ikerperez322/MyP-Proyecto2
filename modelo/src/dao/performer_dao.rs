@@ -1,15 +1,16 @@
+use std::rc::Rc;
 use rusqlite::Connection;
 use rusqlite::params;
 // use crate::modelo::entidades::performer::Performer;
 use crate::entidades::performer::Performer;
 
 //dao para tabla performers
-pub struct PerformerDao<'a> {
-    conexion: &'a Connection,
+pub struct PerformerDao {
+    conexion: Rc<Connection>,
 }
 
-impl<'a> PerformerDao<'a> {
-    pub fn new(conexion: &'a Connection) -> Self {
+impl PerformerDao {
+    pub fn new(conexion: Rc<Connection>) -> Self {
         return Self { conexion };
     }
 

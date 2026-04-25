@@ -16,7 +16,7 @@ impl Minero {
     }
     
     //método que recibe un archivo raíz donde minar archivos mp3
-    pub fn mina(&self, raiz: &str) -> Result<Vec<Cancion>, Box<dyn::std::error::Error>> {
+    pub fn mina(&self, raiz: &Path) -> Result<Vec<Cancion>, Box<dyn::std::error::Error>> {
         let mut canciones: Vec<Cancion> = Vec::new();
         
         for archivo in WalkDir::new(raiz).into_iter().filter_map(|e| e.ok()) {

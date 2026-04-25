@@ -1,21 +1,22 @@
 // use crate::modelo::metadatos::{Artista, Cancion};
+use std::rc::Rc;
 use rusqlite::Connection;
 use crate::{dao::{album_dao::AlbumDao, performer_dao::{self, PerformerDao}, rola_dao::RolaDao}, entidades::{album::Album, performer::Performer, rola::Rola}, metadatos::{Artista, Cancion, Grupo, Persona}};
 
 //objeto que manipula los daos de dao/ a un alto nivel
-pub struct ManejadorDao<'a> {
-    rola_dao: RolaDao<'a>,
-    performer_dao: PerformerDao<'a>,
-    album_dao: AlbumDao<'a>,
+pub struct ManejadorDao {
+    rola_dao: RolaDao,
+    performer_dao: PerformerDao,
+    album_dao: AlbumDao,
 }
 
-impl<'a> ManejadorDao<'a> {
+impl ManejadorDao {
 
-    pub fn new(conexion: &'a Connection) -> Self {
+    pub fn new(conexion: Rc<Connection>) -> Self {
         return Self {
-            rola_dao: RolaDao::new(conexion),
-            performer_dao: PerformerDao::new(conexion),
-            album_dao: AlbumDao::new(conexion),
+            rola_dao: RolaDao::new(conexion.clone()),
+            performer_dao: PerformerDao::new(conexion.clone()),
+            album_dao: AlbumDao::new(conexion.clone()),
         };
     }
 

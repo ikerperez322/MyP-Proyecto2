@@ -1,14 +1,15 @@
+use std::rc::Rc;
 use rusqlite::Connection;
 use rusqlite::params;
 // use crate::modelo::entidades::album::Album;
 use crate::entidades::album::Album;
 
-pub struct AlbumDao<'a> {
-    conexion: &'a Connection,
+pub struct AlbumDao {
+    conexion: Rc<Connection>,
 }
 
-impl<'a> AlbumDao<'a> {
-    pub fn new(conexion: &'a Connection) -> Self {
+impl AlbumDao {
+    pub fn new(conexion: Rc<Connection>) -> Self {
         return Self { conexion };
     }
 

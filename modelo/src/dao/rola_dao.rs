@@ -1,15 +1,16 @@
 use rusqlite::Connection;
+use std::rc::Rc;
 use crate::rola_vista::RolaVista;
 // use crate::modelo::entidades::rola::Rola;
 
 use crate::entidades::rola::Rola;
 
-pub struct RolaDao<'a> {
-    conexion: &'a Connection,
+pub struct RolaDao {
+    conexion: Rc<Connection>,
 }
 
-impl<'a> RolaDao<'a> {
-    pub fn new(conexion: &'a Connection) -> Self {
+impl RolaDao {
+    pub fn new(conexion: Rc<Connection>) -> Self {
         return Self { conexion };
     }
 

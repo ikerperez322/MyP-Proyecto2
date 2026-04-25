@@ -1,13 +1,14 @@
+use std::rc::Rc;
 use rusqlite::Connection;
 // use crate::modelo::entidades::group::Group;
 use crate::entidades::group::Group;
 
-pub struct GroupDao<'a> {
-    conexion: &'a Connection,
+pub struct GroupDao {
+    conexion: Rc<Connection>,
 }
 
-impl<'a> GroupDao<'a> {
-    pub fn new(conexion: &'a Connection) -> Self {
+impl GroupDao {
+    pub fn new(conexion: Rc<Connection>) -> Self {
         return Self { conexion };
     }
 

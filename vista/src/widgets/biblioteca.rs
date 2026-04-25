@@ -3,6 +3,7 @@ use gtk::{FlowBox, ColumnView, Box, Label, Image, Orientation, ScrolledWindow, S
 // use gtk::gio::ListStore;
 use controlador::cancion_vista::CancionVista;
 
+#[derive(Clone)]
 pub struct Biblioteca {
     flowbox: FlowBox,
     column_view: ColumnView,

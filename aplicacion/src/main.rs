@@ -1,3 +1,5 @@
+use std::rc::Rc;
+use std::cell::RefCell;
 use gtk::prelude::*;
 use gtk::Application;
 use rusqlite::Connection;
@@ -35,7 +37,7 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
     let db_path = "/home/kralmasol/Documents/modeladoProgramacion/proyecto2/bd/db.sqlite";
     let existe = Path::new(db_path).exists();
 
-    let conn = Connection::open(db_path)?;
+    let conn = Rc::new(Connection::open(db_path)?);
     conn.execute("PRAGMA foreign_keys = ON", [])?;
 
     if !existe {
@@ -45,22 +47,28 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
     // let servicio = ManejadorDao::new(&conn);
     // let minero = Minero::new();
     
-    let controlador = Controlador::new(&conn);
+    // let controlador = Controlador::new(&conn);
 
-    controlador.poblar_bd("/home/kralmasol/Music/pruebaMusica")?;
+    let controlador = Rc::new(RefCell::new(Controlador::new(conn.clone())));
+    
+    // let ruta_canciones = "/home/kralmasol/Music/pruebaMusica";
+    // let ruta = Path::new(ruta_canciones);
+    
+    // // controlador.borrow_mut().poblar_bd("/home/kralmasol/Music/pruebaMusica")?;
+    // controlador.borrow_mut().poblar_bd(&ruta)?;
 
-    let dao_rola = RolaDao::new(&conn);
-    if let Ok(rola) = dao_rola.buscar_por_titulo("American pie") {
-        if let Some(rolita) = rola {
-            println!("Canción:\n{:#?}", rolita);
-        }
-    }
+    // let dao_rola = RolaDao::new(conn.clone());
+    // if let Ok(rola) = dao_rola.buscar_por_titulo("American pie") {
+    //     if let Some(rolita) = rola {
+    //         println!("Canción:\n{:#?}", rolita);
+    //     }
+    // }
 
-    if let Ok(rola) = dao_rola.buscar_por_titulo("Voices. Vangelis") {
-        if let Some(rolita) = rola {
-            println!("Canción:\n{:#?}", rolita);
-        }
-    }
+    // if let Ok(rola) = dao_rola.buscar_por_titulo("Voices. Vangelis") {
+    //     if let Some(rolita) = rola {
+    //         println!("Canción:\n{:#?}", rolita);
+    //     }
+    // }
 
     gtk::init()?;
     
@@ -71,7 +79,7 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
     
     // Conectar la señal activate
     app.connect_activate(move |app| {
-        if let Err(e) = run_app(app, &conn) {
+        if let Err(e) = run_app(app, controlador.clone()) {
             eprintln!("Error al iniciar la aplicación: {}", e);
         }
     });
@@ -85,13 +93,13 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
 }
 
 
-fn run_app(app: &Application, conexion: &Connection)-> Result<(), Box<dyn std::error::Error>> {
+fn run_app(app: &Application, controlador: Rc<RefCell<Controlador>>) -> Result<(), Box<dyn std::error::Error>> {
     // Inicializar controlador (ajusta según tu implementación)
-    let controlador = Controlador::new(&conexion);
+    // let controlador = Controlador::new(conexion);
     
     // Iniciar la interfaz desde la librería vista
-    vista::iniciar(app, &controlador)?;
+    vista::iniciar(app, controlador)?;
     
-    Ok(())
+    return Ok(());
 }
 
