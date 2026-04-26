@@ -38,12 +38,12 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     main_box.append(&paned);
         
     let left_box = crear_panel_reproductor();
-     left_box.set_width_request(280);
+    left_box.set_width_request(280);
     left_box.set_hexpand(false);
     paned.set_start_child(Some(&left_box));
     // paned.set_start_child(Some(&left_box));
         
-    let (right_box, stack, flowbox, column_view) = crear_panel_biblioteca();
+    let (right_box, stack, flowbox, column_view, btn_grid, btn_table) = crear_panel_biblioteca();
     right_box.set_hexpand(true);
     right_box.set_vexpand(true);
     paned.set_end_child(Some(&right_box));
@@ -51,19 +51,82 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
 
     paned.set_position(280);
 
-    let biblioteca = Biblioteca::new(flowbox.clone(), column_view.clone());
-    let controlador_clon = controlador.clone();
-    let ventana_clon = window.clone();
-    minero_button.connect_clicked(move |_| {
-        // let ctrl = controlador_clon.borrow();
-        mostrar_dialogo_minero(&ventana_clon, controlador_clon.clone(), biblioteca.clone());
-    });
-        
-    let _reproductor = Reproductor::new(left_box);
+    // let biblioteca = Biblioteca::new(flowbox, column_view);
+    // // let controlador_clon = controlador.clone();
+    // let ventana_clon = window.clone();
+    
+    // let stack_clone = stack.clone();
+    // let controlador_clon = controlador.clone();
+    // btn_grid.connect_clicked(move |_| {
+    //     stack_clone.set_visible_child_name("grid_view");
+    // });
+
+    // let biblioteca_clon = biblioteca.clone();
+    // let stack2 = stack.clone();
+    // let controlador2 = controlador.clone();
+    // btn_table.connect_clicked(move |_| {
+    //     stack2.set_visible_child_name("table_view");
+
+    //     match controlador2.borrow().obtener_canciones() {
+    //         Ok(canciones) => {
+    //             biblioteca_clon.cargar_tabla(&canciones);
+    //         }
+    //         Err(e) => {
+    //             eprintln!("Error al cargar tabla: {}", e);
+    //         }
+    //     }
+    // });
+
+    
+    // minero_button.connect_clicked(move |_| {
+    //     // let ctrl = controlador_clon.borrow();
+    //     mostrar_dialogo_minero(&ventana_clon, controlador_clon.clone(), biblioteca.clone());
+    // });
+
     let biblioteca = Biblioteca::new(flowbox, column_view);
-        
+
+    //PANTALLA INICIAL ----Carga las canciones en el grid, por eso se hace aquío y no en btn_grid
     let canciones = controlador.borrow().obtener_canciones()?;
     biblioteca.cargar_en_flowbox(&canciones);
+
+    // clones
+    let biblioteca_para_tabla = biblioteca.clone();
+    let biblioteca_para_minero = biblioteca.clone();
+    let controlador1 = controlador.clone();
+    let stack1 = stack.clone();
+    let stack2 = stack.clone();
+    
+    btn_grid.connect_clicked(move |_| {
+        stack1.set_visible_child_name("grid_view");
+    });
+
+    btn_table.connect_clicked(move |_| {
+        stack2.set_visible_child_name("table_view");
+        
+        match controlador1.borrow().obtener_canciones() {
+            Ok(canciones) => {
+                biblioteca_para_tabla.cargar_tabla(&canciones);
+            }
+            Err(e) => eprintln!("Error: {}", e),
+        }
+    });
+    
+    let controlador_clon = controlador.clone();
+    let ventana_clon = window.clone();
+    
+    minero_button.connect_clicked(move |_| {
+        mostrar_dialogo_minero(
+            &ventana_clon,
+            controlador_clon.clone(),
+            biblioteca_para_minero.clone(),
+        );
+    });
+    
+    let _reproductor = Reproductor::new(left_box);
+    // let biblioteca = Biblioteca::new(flowbox, column_view);
+        
+    // let canciones = controlador.borrow().obtener_canciones()?;
+    // biblioteca.cargar_en_flowbox(&canciones);
         
         
     window.present();
@@ -73,26 +136,21 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
 
 //muestra el dialogo del botón del minero para escoger la carpeta raíz para ejecutar el miner
 fn mostrar_dialogo_minero(parent: &ApplicationWindow, controlador: Rc<RefCell<Controlador>>, biblioteca: Biblioteca) {
-    // let dialogo = gtk::FileChooserDialog::builder()
-    //     .title("Selecciona carpeta raíz para ejecutar el minero.")
-    //     .transient_for(parent)
-    //     .action(gtk::FileChooserAction::SelectFolder)
-    //     .build();
-
     let dialogo = gtk::FileDialog::builder()
         .title("Selecciona carpeta raíz para ejecutar el minero.")
         .accept_label("Abrir")
         .modal(true)
         .build();
-
+    
     dialogo.select_folder(
         Some(parent), 
         None::<&gtk::gio::Cancellable>, 
         move |result| {
             match result {
-                Ok(folder) => {
+                Ok(folder) => {                    
                     if let Some(path) = folder.path() {
                         println!("Carpeta seleccionada: {:?}", path);
+
                         controlador.borrow_mut().poblar_bd(&path);
 
                         match controlador
@@ -100,12 +158,12 @@ fn mostrar_dialogo_minero(parent: &ApplicationWindow, controlador: Rc<RefCell<Co
                             .obtener_canciones() {
                                 Ok(c) => {
                                     biblioteca.cargar_en_flowbox(&c);
+                                    biblioteca.cargar_tabla(&c);
                                 }
                                 Err(e) =>{
                                     println!("Error al obtener canciones: {}", e);
                                 }
-                            };
-
+                            };                                                
                     }
                 }
                 Err(err) => {
@@ -147,6 +205,7 @@ fn mostrar_dialogo_minero(parent: &ApplicationWindow, controlador: Rc<RefCell<Co
 
 //     dialogo.show(Some(parent));
 // }
+
 
 fn crear_panel_reproductor() -> Box {
     let left_box = Box::new(Orientation::Vertical, 5);
@@ -199,7 +258,7 @@ fn crear_panel_reproductor() -> Box {
     return left_box;
 }
 
-fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView) {
+fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button) {
     let right_box = Box::new(Orientation::Vertical, 5);
     
     // Botones para cambiar vista
@@ -242,21 +301,21 @@ fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView) {
     stack.add_named(&grid_scroll, Some("grid_view"));
     stack.add_named(&table_scroll, Some("table_view"));
     
-    // Configurar botones
-    let stack_clone = stack.clone();
-    btn_grid.connect_clicked(move |_| {
-        stack_clone.set_visible_child_name("grid_view");
-    });
+    // // Configurar botones
+    // let stack_clone = stack.clone();
+    // btn_grid.connect_clicked(move |_| {
+    //     stack_clone.set_visible_child_name("grid_view");
+    // });
 
-    let stack2 = stack.clone();
-    btn_table.connect_clicked(move |_| {
-        stack2.set_visible_child_name("table_view");
-    });
+    // let stack2 = stack.clone();
+    // btn_table.connect_clicked(move |_| {
+    //     stack2.set_visible_child_name("table_view");
+    // });
     
     // Mostrar vista inicial
     stack.set_visible_child_name("grid_view");
     
-    return (right_box, stack, flowbox, column_view);
+    return (right_box, stack, flowbox, column_view, btn_grid, btn_table);
 }
 
 // fn configurar_botones_vista(_right_box: &Box, _stack: Stack) {

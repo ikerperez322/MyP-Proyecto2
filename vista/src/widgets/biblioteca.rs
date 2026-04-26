@@ -1,4 +1,6 @@
 use gtk::prelude::*;
+use gtk::gio;
+use gtk::glib;
 use gtk::{FlowBox, ColumnView, Box, Label, Image, Orientation, ScrolledWindow, SingleSelection};
 // use gtk::gio::ListStore;
 use controlador::cancion_vista::CancionVista;
@@ -11,10 +13,12 @@ pub struct Biblioteca {
 
 impl Biblioteca {
     pub fn new(flowbox: FlowBox, column_view: ColumnView) -> Self {
-        return Self {
+        let biblioteca = Self {
             flowbox,
             column_view,
-        }
+        };
+        biblioteca.configurar_columnas();
+        return biblioteca;
     }
     
     pub fn cargar_en_flowbox(&self, canciones: &[CancionVista]) {
@@ -70,12 +74,110 @@ impl Biblioteca {
         
         return card;
     }
+
+
+    //crea la vista de tabla para las canciones
+    pub fn cargar_tabla(&self, canciones: &Vec<CancionVista>) {
+
+        let store = gio::ListStore::new::<glib::BoxedAnyObject>();
+
+        for c in canciones {
+            store.append(&glib::BoxedAnyObject::new(c.clone()));
+        }
+
+        let seleccion = gtk::SingleSelection::new(Some(store));
+        self.column_view.set_model(Some(&seleccion));        
+    }
     
-    // pub fn configurar_tabla(&self, canciones: Vec<CancionVista>) {
-    //     // Aquí irá la configuración de la tabla
-    //     println!("Configurando tabla con {} canciones", canciones.len());
+    //configura las columnas en la vista de tabla para la gui
+    fn configurar_columnas(&self) {
+        //-----------TITULO--------------
+        let fabrica_titulo = gtk::SignalListItemFactory::new();
+
+        fabrica_titulo.connect_setup(|_,item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let label = gtk::Label::new(None);
+            item.set_child(Some(&label));
+        });
+
+        fabrica_titulo.connect_bind(|_,item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let obj = item.item().unwrap();
+            let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            let cancion = boxed.borrow::<CancionVista>();
+
+            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            label.set_text(&cancion.titulo);
+        });
+      
+        let col_titulo = gtk::ColumnViewColumn::new(Some("Título"), Some(fabrica_titulo));
+        self.column_view.append_column(&col_titulo);
         
-        
-    // }
+        //------ARTISTA-------
+         let fabrica_artista = gtk::SignalListItemFactory::new();
+
+        fabrica_artista.connect_setup(|_, item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let label = gtk::Label::new(None);
+            item.set_child(Some(&label));
+        });
+
+        fabrica_artista.connect_bind(|_, item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let obj = item.item().unwrap();
+            let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            let cancion = boxed.borrow::<CancionVista>();
+
+            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            label.set_text(&cancion.artista);
+        });
+
+        let col_artista = gtk::ColumnViewColumn::new(Some("Artista"), Some(fabrica_artista));
+        self.column_view.append_column(&col_artista);
+
+        //--------ALBUM---------
+        let fabrica_album = gtk::SignalListItemFactory::new();
+
+        fabrica_album.connect_setup(|_, item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let label = gtk::Label::new(None);
+            item.set_child(Some(&label));
+        });
+
+        fabrica_album.connect_bind(|_, item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let obj = item.item().unwrap();
+            let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            let cancion = boxed.borrow::<CancionVista>();
+
+            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            label.set_text(&cancion.album);
+        });
+
+        let col_album = gtk::ColumnViewColumn::new(Some("Álbum"), Some(fabrica_album));
+        self.column_view.append_column(&col_album);
+
+        //-----GÉNERO----------
+        let fabrica_genero = gtk::SignalListItemFactory::new();
+
+        fabrica_genero.connect_setup(|_,item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let label = gtk::Label::new(None);
+            item.set_child(Some(&label));
+        });
+
+        fabrica_genero.connect_bind(|_,item| {
+            let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            let obj = item.item().unwrap();
+            let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            let cancion = boxed.borrow::<CancionVista>();
+
+            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            label.set_text(&cancion.genero);
+        });
+
+        let col_genero = gtk::ColumnViewColumn::new(Some("Género"), Some(fabrica_genero));
+        self.column_view.append_column(&col_genero);
+    }
 
 }
