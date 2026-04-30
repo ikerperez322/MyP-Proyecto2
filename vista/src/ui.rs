@@ -36,7 +36,7 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     // window.set_child(Some(&paned);
     main_box.append(&paned);
         
-    let left_box = crear_panel_reproductor();
+    let (left_box, play_button, pause_button, next_button, song_label, progress_bar) = crear_panel_reproductor();
     left_box.set_width_request(220);
     left_box.set_hexpand(false);
     paned.set_position(200);
@@ -123,16 +123,19 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
         );
     });
     
-    let reproductor = Reproductor::new(left_box);
-    
+    let reproductor = Reproductor::new(left_box, play_button, pause_button, next_button, song_label, progress_bar);
+    let canciones_referencia = biblioteca.canciones.clone();
     
     flowbox.connect_selected_children_changed(move |flowbox| {
         if let Some(child) = flowbox.selected_children().first() {
-        if let Some(widget) = child.child() {
-            if let Some(cancion) = widget.data::<CancionVista>("cancion") {
+            let index = child.index() as usize;
+            let canciones = canciones_referencia.borrow();
+
+            if let Some(cancion) = canciones.get(index) {
                 reproductor.set_cancion(cancion);
+                println!("Se seleccionó {}", cancion.titulo);
             }
-        }
+            
     }
     });
     
@@ -263,7 +266,7 @@ fn crear_panel_reproductor() -> (Box, Button, Button, Button, Label, Scale) {
     left_box.append(&buttons_box);
     left_box.append(&spacer_bottom);
     
-    return left_box;
+    return (left_box, play_button, pause_button, next_button, song_label, progress_bar);
 }
 
 fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button) {

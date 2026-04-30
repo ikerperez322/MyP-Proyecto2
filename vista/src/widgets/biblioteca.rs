@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use gtk::prelude::*;
 use gtk::gio;
 use gtk::glib;
@@ -9,6 +12,7 @@ use controlador::cancion_vista::CancionVista;
 pub struct Biblioteca {
     flowbox: FlowBox,
     column_view: ColumnView,
+    pub canciones: Rc<RefCell<Vec<CancionVista>>>,
 }
 
 impl Biblioteca {
@@ -16,12 +20,15 @@ impl Biblioteca {
         let biblioteca = Self {
             flowbox,
             column_view,
+            canciones: Rc::new(RefCell::new(Vec::new())),
         };
         return biblioteca;
     }
     
     pub fn cargar_en_flowbox(&self, canciones: &[CancionVista]) {
         // self.flowbox.remove_all();
+
+        *self.canciones.borrow_mut() = canciones.to_vec();
         
         for cancion in canciones {
             let card = Self::crear_card(cancion);
@@ -41,8 +48,7 @@ impl Biblioteca {
         card.set_margin_bottom(10);
         card.set_margin_start(10);
         card.set_margin_end(10);
-        card.add_css_class("card");
-        card.set_data("cancion", cancion.clone());
+        card.add_css_class("card");        
 
         let top = Box::new(Orientation::Vertical, 5);
         let bottom = Box::new(Orientation::Vertical, 2);

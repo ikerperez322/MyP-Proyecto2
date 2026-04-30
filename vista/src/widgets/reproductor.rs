@@ -13,14 +13,14 @@ pub struct Reproductor {
 }
 
 impl Reproductor {
-    pub fn new(container: gtk::Box) -> Self {
+    pub fn new(container: gtk::Box, play_button: gtk::Button, pause_button: gtk::Button, next_button: gtk::Button, song_label: gtk::Label, progress_bar: gtk::Scale) -> Self {
         
-        let play_button = Button::with_label("▶");
-        let pause_button = Button::with_label("⏸");
-        let next_button = Button::with_label("⏭");
+        let play_button = play_button;
+        let pause_button = pause_button;
+        let next_button = next_button;
         let cover_image = Image::from_icon_name("audio-x-generic-symbolic");
-        let song_label = Label::new(Some("No hay canción seleccionada"));
-        let progress_bar = Scale::new(gtk::Orientation::Horizontal, None::<&Adjustment>);
+        let song_label = song_label;
+        let progress_bar = progress_bar;
         
         return Self {
             container,
