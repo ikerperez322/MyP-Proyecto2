@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 use gtk::ffi::GtkAlertDialog;
-use gtk::{ResponseType, prelude::*};
+use gtk::{ResponseType, TextView, prelude::*};
 use gtk::{Application, ApplicationWindow, Adjustment, Box, Button, Paned, Stack, ScrolledWindow, 
     FlowBox, ColumnView, Label, Image, Scale, Orientation, SelectionModel};
 // use rusqlite::Result;
@@ -26,11 +26,10 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     top_bar.set_margin_end(5);
     top_bar.set_halign(gtk::Align::End);
     
-    let minero_button = Button::with_label("Minero");
+    let minero_button = Button::with_label("Minar");
     minero_button.add_css_class("minero-button");
     top_bar.append(&minero_button);
     main_box.append(&top_bar);
-
     
     let paned = Paned::new(Orientation::Horizontal);
     paned.set_vexpand(true);
@@ -38,52 +37,54 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     main_box.append(&paned);
         
     let left_box = crear_panel_reproductor();
-    left_box.set_width_request(280);
+    left_box.set_width_request(220);
     left_box.set_hexpand(false);
+    paned.set_position(200);
     paned.set_start_child(Some(&left_box));
     // paned.set_start_child(Some(&left_box));
         
     let (right_box, stack, flowbox, column_view, btn_grid, btn_table) = crear_panel_biblioteca();
     right_box.set_hexpand(true);
     right_box.set_vexpand(true);
-    paned.set_end_child(Some(&right_box));
+    
     // paned.set_end_child(Some(&right_box));
 
-    paned.set_position(280);
+    let text_view = TextView::new();
+    text_view.add_css_class("consulta-area");
+    text_view.set_margin_top(5);
+    text_view.set_margin_bottom(5);
 
-    // let biblioteca = Biblioteca::new(flowbox, column_view);
-    // // let controlador_clon = controlador.clone();
-    // let ventana_clon = window.clone();
-    
-    // let stack_clone = stack.clone();
-    // let controlador_clon = controlador.clone();
-    // btn_grid.connect_clicked(move |_| {
-    //     stack_clone.set_visible_child_name("grid_view");
-    // });
+    // if let Some(buffer) = text_view.buffer() {
+    //     buffer.set_text("obtener canciones");
+    // }
 
-    // let biblioteca_clon = biblioteca.clone();
-    // let stack2 = stack.clone();
-    // let controlador2 = controlador.clone();
-    // btn_table.connect_clicked(move |_| {
-    //     stack2.set_visible_child_name("table_view");
+    let scroll = ScrolledWindow::builder()
+        .min_content_height(120)
+        .child(&text_view)
+        .build();
 
-    //     match controlador2.borrow().obtener_canciones() {
-    //         Ok(canciones) => {
-    //             biblioteca_clon.cargar_tabla(&canciones);
-    //         }
-    //         Err(e) => {
-    //             eprintln!("Error al cargar tabla: {}", e);
-    //         }
-    //     }
-    // });
+    let ejecutar_button = Button::with_label("Ejecutar");
+    ejecutar_button.add_css_class("execute-button");
+    ejecutar_button.set_halign(gtk::Align::Center);
 
-    
-    // minero_button.connect_clicked(move |_| {
-    //     // let ctrl = controlador_clon.borrow();
-    //     mostrar_dialogo_minero(&ventana_clon, controlador_clon.clone(), biblioteca.clone());
-    // });
+    let consulta_box = Box::new(Orientation::Vertical, 5);
+    consulta_box.set_spacing(8);
+    consulta_box.append(&scroll);
+    consulta_box.append(&ejecutar_button);
 
-    let biblioteca = Biblioteca::new(flowbox, column_view);
+    let right_container = Box::new(Orientation::Vertical, 5);
+    right_container.set_margin_top(10);
+    right_container.set_margin_start(10);
+    right_container.set_margin_end(10);
+    right_container.set_margin_bottom(10);
+    right_container.append(&consulta_box);
+    right_container.append(&right_box);
+
+    paned.set_end_child(Some(&right_container));
+
+    // paned.set_position(280);
+
+    let biblioteca = Biblioteca::new(flowbox.clone(), column_view);
 
     //PANTALLA INICIAL ----Carga las canciones en el grid, por eso se hace aquío y no en btn_grid
     let canciones = controlador.borrow().obtener_canciones()?;
@@ -122,13 +123,20 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
         );
     });
     
-    let _reproductor = Reproductor::new(left_box);
-    // let biblioteca = Biblioteca::new(flowbox, column_view);
-        
-    // let canciones = controlador.borrow().obtener_canciones()?;
-    // biblioteca.cargar_en_flowbox(&canciones);
-        
-        
+    let reproductor = Reproductor::new(left_box);
+    
+    
+    flowbox.connect_selected_children_changed(move |flowbox| {
+        if let Some(child) = flowbox.selected_children().first() {
+        if let Some(widget) = child.child() {
+            if let Some(cancion) = widget.data::<CancionVista>("cancion") {
+                reproductor.set_cancion(cancion);
+            }
+        }
+    }
+    });
+    
+    
     window.present();
     
     return Ok(());
@@ -207,53 +215,53 @@ fn mostrar_dialogo_minero(parent: &ApplicationWindow, controlador: Rc<RefCell<Co
 // }
 
 
-fn crear_panel_reproductor() -> Box {
-    let left_box = Box::new(Orientation::Vertical, 5);
-    left_box.set_margin_top(10);
-    left_box.set_margin_bottom(10);
-    left_box.set_margin_start(10);
-    left_box.set_margin_end(10);
-    
-    // Contenedor superior (imagen + título)
-    let top_box = Box::new(Orientation::Vertical, 5);
-    top_box.set_vexpand(true);
-    
+fn crear_panel_reproductor() -> (Box, Button, Button, Button, Label, Scale) {
+
+    let left_box = Box::new(Orientation::Vertical, 10);
+    // left_box.set_margin_all(10);
+    left_box.add_css_class("reproductor");
+
+    let spacer_top = Box::new(Orientation::Vertical, 0);
+    spacer_top.set_vexpand(true);
+
+    let center_box = Box::new(Orientation::Vertical, 8);
+    center_box.set_valign(gtk::Align::Center);
+
     let cover_image = Image::from_icon_name("audio-x-generic-symbolic");
-    cover_image.set_pixel_size(200);
-    cover_image.set_halign(gtk::Align::Center);
-    
+    cover_image.set_pixel_size(160);
+
     let song_label = Label::new(Some("No hay canción seleccionada"));
     song_label.add_css_class("song-title");
-    song_label.set_halign(gtk::Align::Center);
-    
-    top_box.append(&cover_image);
-    top_box.append(&song_label);
-    left_box.append(&top_box);
-    
-    // Barra de progreso
+
+    center_box.append(&cover_image);
+    center_box.append(&song_label);
+
     let progress_bar = Scale::new(Orientation::Horizontal, None::<&Adjustment>);
-    progress_bar.set_draw_value(true);
-    progress_bar.set_hexpand(true);
-    left_box.append(&progress_bar);
-    
-    // Botones de control
-    let buttons_box = Box::new(Orientation::Horizontal, 5);
+    progress_bar.add_css_class("progress-bar");
+
+    let buttons_box = Box::new(Orientation::Horizontal, 10);
     buttons_box.set_halign(gtk::Align::Center);
-    buttons_box.set_margin_top(10);
-    buttons_box.set_margin_bottom(10);
-    
+
     let play_button = Button::with_label("▶");
     let pause_button = Button::with_label("⏸");
     let next_button = Button::with_label("⏭");
-    
+
     play_button.add_css_class("play-button");
     pause_button.add_css_class("pause-button");
     next_button.add_css_class("next-button");
-    
+
     buttons_box.append(&play_button);
     buttons_box.append(&pause_button);
     buttons_box.append(&next_button);
+
+    let spacer_bottom = Box::new(Orientation::Vertical, 0);
+    spacer_bottom.set_vexpand(true);
+
+    left_box.append(&spacer_top);
+    left_box.append(&center_box);
+    left_box.append(&progress_bar);
     left_box.append(&buttons_box);
+    left_box.append(&spacer_bottom);
     
     return left_box;
 }
@@ -267,8 +275,8 @@ fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button)
     view_buttons_box.set_margin_end(10);
     view_buttons_box.set_halign(gtk::Align::End);
     
-    let btn_grid = Button::with_label("Grid");
-    let btn_table = Button::with_label("Table");
+    let btn_grid = Button::with_label("Tarjetas");
+    let btn_table = Button::with_label("Tabla");
     
     btn_grid.add_css_class("view-button");
     btn_table.add_css_class("view-button");
@@ -287,14 +295,20 @@ fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button)
     let flowbox = FlowBox::new();
     flowbox.set_row_spacing(10);
     flowbox.set_column_spacing(10);
-    flowbox.set_max_children_per_line(4);
-    flowbox.set_selection_mode(gtk::SelectionMode::None);
+    // flowbox.set_max_children_per_line(4);
+    flowbox.set_max_children_per_line(6);
+    flowbox.set_min_children_per_line(6);
+    flowbox.set_homogeneous(true);
+    flowbox.set_selection_mode(gtk::SelectionMode::Single);
     flowbox.set_halign(gtk::Align::Center);
     grid_scroll.set_child(Some(&flowbox));
     
     // Vista Tabla
     let table_scroll = ScrolledWindow::new();
-    let column_view = ColumnView::new(None::<SelectionModel>);
+    let selection = gtk::SingleSelection::new(None::<gtk::gio::ListModel>);
+    // let column_view = ColumnView::new(None::<SelectionModel>);
+    let column_view = ColumnView::new(Some(selection));
+    column_view.add_css_class("tabla-canciones");
     table_scroll.set_child(Some(&column_view));
     
     // Agregar vistas al stack
@@ -317,7 +331,3 @@ fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button)
     
     return (right_box, stack, flowbox, column_view, btn_grid, btn_table);
 }
-
-// fn configurar_botones_vista(_right_box: &Box, _stack: Stack) {
-
-// }

@@ -1,69 +1,83 @@
 /* Estilos generales */
 window {
-    background-color: #2b2b2b;
+    background-color: #1e1e2e; 
+}
+
+box {
+    background-color: transparent;
 }
 
 /* Tarjetas de la vista Grid */
 .card {
-    background-color: #3c3c3c;
-    border-radius: 8px;
+    /* background-color: #3c3c3c; */
+    /* border-radius: 8px; */
+    /* padding: 10px; */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+    /* background-color: #2a2a3d; */
+    /* border-radius: 10px; */
+    /* padding: 12px; */
+    background-color: #1e1e2e;
+    border-radius: 12px;
     padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-width: 180px;
+    min-height: 220px;
+    transition: all 0.2s ease;
 }
 
 .card:hover {
-    background-color: #4a4a4a;
-    transition: background-color 0.2s;
+    /* background-color: #4a4a4a; */
+    /* transition: background-color 0.2s; */
+    /* background-color: #343450; */
+    background-color: #313244;
+    transform: translateY(-4px);
 }
 
 .card-title {
     font-size: 12px;
     font-weight: bold;
-    color: #ffffff;
-    margin-top: 5px;
+    /* color: #ffffff; */
+    /* margin-top: 5px; */
+    color: #f5f5f5;
 }
 
 .card-artist {
     font-size: 10px;
-    color: #b0b0b0;
+    /* color: #b0b0b0; */
+    color: #c0c0c0;
 }
 
 .card-album {
     font-size: 9px;
-    color: #808080;
+    /* color: #808080; */
+    color: #8888aa;
 }
 
 /* Botones */
 .view-button {
-    background-color: #4a4a4a;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
+    /* background-color: #4a4a4a; */
+    /* color: white; */
+    /* border: none; */
+    /* border-radius: 4px; */
+    /* padding: 5px 10px; */
+    background-color: #2a2a3d;
+    color: #ffffff;
+    border-radius: 6px;
+    padding: 6px 12px;
 }
 
 .view-button:hover {
-    background-color: #5a5a5a;
-}
-
-.play-button, .pause-button, .next-button {
-    background-color: #3c3c3c;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-.play-button:hover, .pause-button:hover, .next-button:hover {
-    background-color: #4a4a4a;
+    /* background-color: #5a5a5a; */
+    background-color: #3a3a5a;
 }
 
 /* Título de canción */
 .song-title {
-    font-size: 14px;
+    /* font-size: 14px; */
+    /* font-weight: bold; */
+    /* color: #ffffff; */
+    font-size: 16px;
     font-weight: bold;
-    color: #ffffff;
+    color: #f8f8f2;
 }
 
 /* Scrollbar */
@@ -72,8 +86,14 @@ scrollbar {
 }
 
 scrollbar slider {
-    background-color: #5a5a5a;
-    border-radius: 8px;
+    /* background-color: #5a5a5a; */
+    /* border-radius: 8px; */
+    background-color: #6272a4;
+    border-radius: 10px;
+}
+
+scrollbar slider:hover {
+    background-color: #7f8cff;
 }
 
 /* Botón Minero */
@@ -97,4 +117,166 @@ scrollbar slider {
 
 .minero-button:active {
     transform: translateY(0);
+}
+
+/* Área de texto */
+.consulta-area {
+    /* background-color: #ffffff; */
+    /* color: #000000; */
+    /* border-radius: 8px; */
+    /* padding: 8px; */
+    /* font-family: monospace; */
+    /* font-size: 14px; */
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 14px;
+
+    border: 2px solid #44475a;
+}
+
+.consulta-area:focus {
+    border: 2px solid #6272a4; 
+}
+
+.execute-button {
+    background: #50fa7b;
+    color: #1e1e2e;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.execute-button:hover {
+    background: #69ff94;
+}
+
+
+/* -------------VISTA TABLA-----------------------*/
+/* Tabla general */
+.tabla-canciones {
+    background-color: #1e1e2e;
+    border-radius: 10px;
+}
+
+/* Filas */
+.tabla-canciones row {
+    background-color: transparent;
+    border-radius: 6px;
+}
+
+.tabla-canciones row:hover {
+    background-color: #313244;
+}
+
+/* Celdas */
+.tabla-canciones label {
+    color: #f8f8f2;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+columnview header {
+    background-color: #2a2a3d;
+    border-radius: 8px;
+}
+
+columnview header label {
+    color: #cdd6f4;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.tabla-canciones row:nth-child(even) {
+    background-color: #262637;
+}
+
+.tabla-canciones row:nth-child(odd) {
+    background-color: #1e1e2e;
+}
+
+.tabla-canciones row:selected {
+    background-color: #89b4fa;
+}
+
+.tabla-canciones row:selected label {
+    /* color: #1e1e2e; */
+    color: #1e1e2e;
+    font-weight: bold;
+}
+
+.tabla-canciones row:hover label {
+    color: #ffffff;
+}
+
+.cell {
+    padding: 6px 10px;
+}
+
+.col-titulo {
+    color: #f8f8f2;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.col-artista {
+    font-size: 13px;
+    color: #cdd6f4;
+}
+
+.col-album {
+    font-size: 12px;
+    color: #a6adc8;
+}
+
+.col-genero {
+    font-size: 13px;
+    font-style: italic;
+    color: #89b4fa;
+}
+
+/*----------REPRODUCTOR------------*/
+.reproductor {
+    background-color: #181825;
+    border-radius: 12px;
+}
+
+/* Imagen */
+.reproductor image {
+    margin-bottom: 10px;
+}
+
+/* Título */
+.song-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #f8f8f2;
+}
+
+/* Barra */
+.progress-bar {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* Botones */
+.play-button, .pause-button, .next-button {
+    background-color: #313244;
+    border-radius: 50%;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 16px;
+}
+
+.play-button {
+    min-width: 50px;
+    min-height: 50px;
+    font-size: 18px;
+}
+
+.play-button:hover {
+    background-color: #89b4fa;
 }

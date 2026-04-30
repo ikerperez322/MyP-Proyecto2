@@ -1,5 +1,6 @@
 use gtk::prelude::*;
 use gtk::{Adjustment, Button, Image, Label, Scale};
+use controlador::cancion_vista::CancionVista;
 
 pub struct Reproductor {
     container: gtk::Box,
@@ -31,6 +32,10 @@ impl Reproductor {
             progress_bar,
         }
     }
+
+    //método para configurar el título de la canción que se va a poner en el reproductor
+    pub fn set_cancion(&self, cancion: &CancionVista) {
+        self.song_label.set_text(&cancion.titulo);
+    }
     
-    // Aquí irán los métodos para controlar la reproducción
 }

@@ -17,7 +17,6 @@ impl Biblioteca {
             flowbox,
             column_view,
         };
-        biblioteca.configurar_columnas();
         return biblioteca;
     }
     
@@ -33,44 +32,63 @@ impl Biblioteca {
     fn crear_card(cancion: &CancionVista) -> Box {
         let card = Box::new(Orientation::Vertical, 5);
 
-        card.set_width_request(180);
-        card.set_height_request(220);
+        // card.set_width_request(180);
+        // card.set_height_request(220);
+        card.set_size_request(180, 220);
+        card.set_valign(gtk::Align::Center);
         
         card.set_margin_top(10);
         card.set_margin_bottom(10);
         card.set_margin_start(10);
         card.set_margin_end(10);
         card.add_css_class("card");
-        
+        card.set_data("cancion", cancion.clone());
+
+        let top = Box::new(Orientation::Vertical, 5);
+        let bottom = Box::new(Orientation::Vertical, 2);
+                
         // Imagen
         let imagen = Image::from_icon_name("audio-x-generic-symbolic");
+        imagen.set_halign(gtk::Align::Center);
         imagen.set_pixel_size(120);
         
         // Título
         let titulo = Label::new(Some(&cancion.titulo));
+        titulo.add_css_class("card-title");
         titulo.set_wrap(true);
         titulo.set_max_width_chars(15);
         titulo.set_lines(2);
+        titulo.set_ellipsize(gtk::pango::EllipsizeMode::End);
         // titulo.set_max_width_chars(20);
-        titulo.add_css_class("card-title");
         titulo.set_halign(gtk::Align::Center);
         
         // Artista
         let artista = Label::new(Some(&cancion.artista));
         artista.add_css_class("card-artist");
+        artista.set_max_width_chars(18);
         artista.set_halign(gtk::Align::Center);
         artista.set_ellipsize(gtk::pango::EllipsizeMode::End); 
         
         // Álbum
         let album = Label::new(Some(&cancion.album));
         album.add_css_class("card-album");
+        album.set_max_width_chars(18);
         album.set_halign(gtk::Align::Center);
         album.set_ellipsize(gtk::pango::EllipsizeMode::End);
         
-        card.append(&imagen);
-        card.append(&titulo);
-        card.append(&artista);
-        card.append(&album);
+        // card.append(&imagen);
+        // card.append(&titulo);
+        // card.append(&artista);
+        // card.append(&album);
+
+        top.append(&imagen);
+        
+        bottom.append(&titulo);
+        bottom.append(&artista);
+        bottom.append(&album);
+        
+        card.append(&top);
+        card.append(&bottom);        
         
         return card;
     }
@@ -95,40 +113,110 @@ impl Biblioteca {
         let fabrica_titulo = gtk::SignalListItemFactory::new();
 
         fabrica_titulo.connect_setup(|_,item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let label = gtk::Label::new(None);
+            // label.set_xalign(0.0);
+            // label.set_margin_start(10);
+            // label.set_margin_end(10);
+            // label.set_margin_top(4);
+            // label.set_margin_bottom(4);
+            // item.set_child(Some(&label));
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+
+            let box_cell = gtk::Box::new(Orientation::Horizontal, 0);
+            box_cell.add_css_class("cell");
+            
             let label = gtk::Label::new(None);
-            item.set_child(Some(&label));
+            label.add_css_class("col-titulo");
+            label.set_xalign(0.0);
+            label.set_margin_start(10);
+            label.set_margin_end(10);
+            label.set_margin_top(4);
+            label.set_margin_bottom(4);
+
+            label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+            label.set_max_width_chars(30);
+            label.set_wrap(false);
+            
+            box_cell.append(&label);
+            item.set_child(Some(&box_cell));
         });
 
         fabrica_titulo.connect_bind(|_,item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let obj = item.item().unwrap();
+            // let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            // let cancion = boxed.borrow::<CancionVista>();
+
+            // let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            // label.set_text(&cancion.titulo);
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            
             let obj = item.item().unwrap();
             let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
             let cancion = boxed.borrow::<CancionVista>();
-
-            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            
+            let box_cell = item.child().unwrap().downcast::<gtk::Box>().unwrap();
+            let label = box_cell.first_child().unwrap().downcast::<gtk::Label>().unwrap();
+            
             label.set_text(&cancion.titulo);
         });
       
         let col_titulo = gtk::ColumnViewColumn::new(Some("Título"), Some(fabrica_titulo));
+        col_titulo.set_resizable(true);
+        col_titulo.set_expand(true);
         self.column_view.append_column(&col_titulo);
         
         //------ARTISTA-------
          let fabrica_artista = gtk::SignalListItemFactory::new();
 
         fabrica_artista.connect_setup(|_, item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let label = gtk::Label::new(None);
+            // label.set_xalign(0.0);
+            // label.set_margin_start(10);
+            // label.set_margin_end(10);
+            // label.set_margin_top(4);
+            // label.set_margin_bottom(4);
+            // item.set_child(Some(&label));
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+
+            let box_cell = gtk::Box::new(Orientation::Horizontal, 0);
+            box_cell.add_css_class("cell");
+            
             let label = gtk::Label::new(None);
-            item.set_child(Some(&label));
+            label.add_css_class("col-artista");
+            label.set_xalign(0.0);
+            label.set_margin_start(10);
+            label.set_margin_end(10);
+            label.set_margin_top(4);
+            label.set_margin_bottom(4);
+
+            label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+            label.set_max_width_chars(30);
+            label.set_wrap(false);
+            
+            box_cell.append(&label);
+            item.set_child(Some(&box_cell));
         });
 
         fabrica_artista.connect_bind(|_, item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let obj = item.item().unwrap();
+            // let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            // let cancion = boxed.borrow::<CancionVista>();
+
+            // let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            // label.set_text(&cancion.artista);
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            
             let obj = item.item().unwrap();
             let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
             let cancion = boxed.borrow::<CancionVista>();
-
-            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            
+            let box_cell = item.child().unwrap().downcast::<gtk::Box>().unwrap();
+            let label = box_cell.first_child().unwrap().downcast::<gtk::Label>().unwrap();
+            
             label.set_text(&cancion.artista);
         });
 
@@ -139,18 +227,52 @@ impl Biblioteca {
         let fabrica_album = gtk::SignalListItemFactory::new();
 
         fabrica_album.connect_setup(|_, item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let label = gtk::Label::new(None);
+            // label.set_xalign(0.0);
+            // label.set_margin_start(10);
+            // label.set_margin_end(10);
+            // label.set_margin_top(4);
+            // label.set_margin_bottom(4);
+            // item.set_child(Some(&label));
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+
+            let box_cell = gtk::Box::new(Orientation::Horizontal, 0);
+            box_cell.add_css_class("cell");
+            
             let label = gtk::Label::new(None);
-            item.set_child(Some(&label));
+            label.add_css_class("col-album");
+            label.set_xalign(0.0);
+            label.set_margin_start(10);
+            label.set_margin_end(10);
+            label.set_margin_top(4);
+            label.set_margin_bottom(4);
+
+            label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+            label.set_max_width_chars(30);
+            label.set_wrap(false);
+            
+            box_cell.append(&label);
+            item.set_child(Some(&box_cell));
         });
 
         fabrica_album.connect_bind(|_, item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let obj = item.item().unwrap();
+            // let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            // let cancion = boxed.borrow::<CancionVista>();
+
+            // let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            // label.set_text(&cancion.album);
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            
             let obj = item.item().unwrap();
             let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
             let cancion = boxed.borrow::<CancionVista>();
-
-            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            
+            let box_cell = item.child().unwrap().downcast::<gtk::Box>().unwrap();
+            let label = box_cell.first_child().unwrap().downcast::<gtk::Label>().unwrap();
+            
             label.set_text(&cancion.album);
         });
 
@@ -161,18 +283,52 @@ impl Biblioteca {
         let fabrica_genero = gtk::SignalListItemFactory::new();
 
         fabrica_genero.connect_setup(|_,item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let label = gtk::Label::new(None);
+            // label.set_xalign(0.0);
+            // label.set_margin_start(10);
+            // label.set_margin_end(10);
+            // label.set_margin_top(4);
+            // label.set_margin_bottom(4);
+            // item.set_child(Some(&label));
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+
+            let box_cell = gtk::Box::new(Orientation::Horizontal, 0);
+            box_cell.add_css_class("cell");
+            
             let label = gtk::Label::new(None);
-            item.set_child(Some(&label));
+            label.add_css_class("col-genero");
+            label.set_xalign(0.0);
+            label.set_margin_start(10);
+            label.set_margin_end(10);
+            label.set_margin_top(4);
+            label.set_margin_bottom(4);
+
+            label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+            label.set_max_width_chars(30);
+            label.set_wrap(false);
+            
+            box_cell.append(&label);
+            item.set_child(Some(&box_cell));
         });
 
         fabrica_genero.connect_bind(|_,item| {
+            // let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            // let obj = item.item().unwrap();
+            // let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
+            // let cancion = boxed.borrow::<CancionVista>();
+
+            // let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            // label.set_text(&cancion.genero);
             let item = item.downcast_ref::<gtk::ListItem>().unwrap();
+            
             let obj = item.item().unwrap();
             let boxed = obj.downcast::<glib::BoxedAnyObject>().unwrap();
             let cancion = boxed.borrow::<CancionVista>();
-
-            let label = item.child().unwrap().downcast::<gtk::Label>().unwrap();
+            
+            let box_cell = item.child().unwrap().downcast::<gtk::Box>().unwrap();
+            let label = box_cell.first_child().unwrap().downcast::<gtk::Label>().unwrap();
+            
             label.set_text(&cancion.genero);
         });
 

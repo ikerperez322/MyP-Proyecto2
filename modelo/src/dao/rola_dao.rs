@@ -147,6 +147,7 @@ impl RolaDao {
     }
 
     pub fn obtener_todas_canciones_vista(&self) -> rusqlite::Result<Vec<RolaVista>> {
+
         let mut stmt = self.conexion.prepare("
         SELECT r.title, p.name, a.name, r.genre
         FROM rolas r
