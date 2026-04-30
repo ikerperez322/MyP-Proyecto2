@@ -22,6 +22,7 @@ impl Biblioteca {
             column_view,
             canciones: Rc::new(RefCell::new(Vec::new())),
         };
+        biblioteca.configurar_columnas();
         return biblioteca;
     }
     

@@ -149,7 +149,7 @@ impl RolaDao {
     pub fn obtener_todas_canciones_vista(&self) -> rusqlite::Result<Vec<RolaVista>> {
 
         let mut stmt = self.conexion.prepare("
-        SELECT r.title, p.name, a.name, r.genre
+        SELECT r.title, p.name, a.name, r.genre, r.path
         FROM rolas r
         JOIN performers p ON r.id_performer = p.id_performer
         JOIN albums a ON r.id_album = a.id_album
@@ -161,6 +161,7 @@ impl RolaDao {
                 artista: col.get(1)?,
                 album: col.get(2)?,
                 genero: col.get(3)?,
+                path: col.get(4)?,
             })
         })?;
         

@@ -12,6 +12,7 @@ use crate::cancion_vista::CancionVista;
 pub struct Controlador {
     conexion: Rc<Connection>,
     ruta_base_datos: String,
+    reproductor: Reproductor,
 }
 
 impl Controlador {
@@ -19,6 +20,7 @@ impl Controlador {
         return Self {
             conexion: conexion,
             ruta_base_datos: ruta_base_datos,
+            reproductor: Reproductor::new(),
         };
     }
 
@@ -101,7 +103,7 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
         let mut canciones_vista: Vec<CancionVista> = Vec::new();
         
         for cancion in canciones_bd {
-            let rola = CancionVista::new(cancion.titulo, cancion.artista, cancion.album, cancion.genero);
+            let rola = CancionVista::new(cancion.titulo, cancion.artista, cancion.album, cancion.genero, cancion.path);
             canciones_vista.push(rola);
         }
         
@@ -110,8 +112,7 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
 
     //reproduce una canción desde la interfaz gráfica, manda a llamar al reproductor
     pub fn reproduce_cancion(&self, path_cancion: &str) -> Result<(), Box<dyn::std::error::Error>> {
-        let reproductor = Reproductor::new();
-        reproductor.reproduce_cancion(path_cancion)?;
+        self.reproductor.reproduce_cancion(path_cancion)?;
         return Ok(());
     }
     

@@ -112,18 +112,20 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
         }
     });
     
-    let controlador_clon = controlador.clone();
+    let controlador_minero = controlador.clone();
     let ventana_clon = window.clone();
     
     minero_button.connect_clicked(move |_| {
         mostrar_dialogo_minero(
             &ventana_clon,
-            controlador_clon.clone(),
+            controlador_minero.clone(),
             biblioteca_para_minero.clone(),
         );
     });
+
+    let controlador_reproductor = controlador.clone();
     
-    let reproductor = Reproductor::new(left_box, play_button, pause_button, next_button, song_label, progress_bar);
+    let reproductor = Reproductor::new(left_box, play_button, pause_button, next_button, song_label, progress_bar, controlador_reproductor);
     let canciones_referencia = biblioteca.canciones.clone();
     
     flowbox.connect_selected_children_changed(move |flowbox| {
@@ -136,7 +138,7 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
                 println!("Se seleccionó {}", cancion.titulo);
             }
             
-    }
+        }
     });
     
     

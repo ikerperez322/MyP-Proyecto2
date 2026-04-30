@@ -24,7 +24,7 @@ impl Reproductor {
         let source = Decoder::new(BufReader::new(cancion))?;
 
         self.sink.append(source);
-        self.sink.sleep_until_end();
+        // self.sink.sleep_until_end();
         
         return Ok(());
     }
