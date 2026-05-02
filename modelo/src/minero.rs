@@ -30,7 +30,6 @@ impl Minero {
                                 let cancion = Self::analiza_cancion(tag, path);
                                 println!("Canción:\n{:#?}", cancion);
                                 canciones.push(cancion);
-                                // println!("Canción: {:?}", cancion);
                             } else {
                                 println!("Archivo SIN ID3v2: {}", path.display());
                             }
@@ -124,28 +123,3 @@ impl Minero {
         }
     }    
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_id3v2() {
-//         for archivo in WalkDir::new("/home/kralmasol/Music/pruebaMusica").into_iter().filter_map(|e| e.ok()) {
-//             let path = archivo.path();
-
-//             if archivo.file_type().is_file() {
-//                 if let Some(extension) = path.extension() {
-//                     if extension == "mp3" {
-//                         // let actual = Probe::open(path).unwrap().read().unwrap();
-//                         let actual = match Probe::open {
-//                             Ok()
-//                         }
-//                         assert_eq!(actual.primary_tag_type(), TagType::Id3v2);
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-

@@ -1,9 +1,6 @@
-use std::sync::{Arc, Mutex};
-use gtk::ffi::GtkAlertDialog;
-use gtk::{ResponseType, TextView, prelude::*};
+use gtk::prelude::*;
 use gtk::{Application, ApplicationWindow, Adjustment, Box, Button, Paned, Stack, ScrolledWindow, 
-    FlowBox, ColumnView, Label, Image, Scale, Orientation, SelectionModel};
-// use rusqlite::Result;
+    FlowBox, ColumnView, Label, Image, Scale, Orientation, TextView};
 use std::rc::Rc;
 use std::cell::RefCell;
 use controlador::controlador::Controlador;
@@ -15,12 +12,10 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     let window = ApplicationWindow::new(app);
     window.set_title(Some("Reproductor de Música"));
     window.set_default_size(900, 600);
-
-    // Crear un Box principal vertical
+   
     let main_box = Box::new(Orientation::Vertical, 0);
     window.set_child(Some(&main_box));
     
-    // Contenedor para el botón minero (barra superior)
     let top_bar = Box::new(Orientation::Horizontal, 0);
     top_bar.set_margin_top(5);
     top_bar.set_margin_end(5);
@@ -33,31 +28,23 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     
     let paned = Paned::new(Orientation::Horizontal);
     paned.set_vexpand(true);
-    // window.set_child(Some(&paned);
     main_box.append(&paned);
         
-    let (left_box, play_button, pause_button, next_button, song_label, progress_bar) = crear_panel_reproductor();
+    let (left_box, play_button, song_label) = crear_panel_reproductor();
     left_box.set_width_request(220);
     left_box.set_hexpand(false);
     paned.set_position(200);
     paned.set_start_child(Some(&left_box));
-    // paned.set_start_child(Some(&left_box));
         
     let (right_box, stack, flowbox, column_view, btn_grid, btn_table) = crear_panel_biblioteca();
     right_box.set_hexpand(true);
     right_box.set_vexpand(true);
     
-    // paned.set_end_child(Some(&right_box));
-
     let text_view = TextView::new();
     text_view.add_css_class("consulta-area");
     text_view.set_margin_top(5);
     text_view.set_margin_bottom(5);
-
-    // if let Some(buffer) = text_view.buffer() {
-    //     buffer.set_text("obtener canciones");
-    // }
-
+    
     let scroll = ScrolledWindow::builder()
         .min_content_height(120)
         .child(&text_view)
@@ -81,8 +68,6 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
     right_container.append(&right_box);
 
     paned.set_end_child(Some(&right_container));
-
-    // paned.set_position(280);
 
     let biblioteca = Biblioteca::new(flowbox.clone(), column_view);
 
@@ -125,7 +110,7 @@ pub fn construir(app: &Application, controlador: Rc<RefCell<Controlador>>) -> ru
 
     let controlador_reproductor = controlador.clone();
     
-    let reproductor = Reproductor::new(left_box, play_button, pause_button, next_button, song_label, progress_bar, controlador_reproductor);
+    let reproductor = Reproductor::new(play_button, song_label, controlador_reproductor);
     let canciones_referencia = biblioteca.canciones.clone();
     
     flowbox.connect_selected_children_changed(move |flowbox| {
@@ -164,8 +149,10 @@ fn mostrar_dialogo_minero(parent: &ApplicationWindow, controlador: Rc<RefCell<Co
                     if let Some(path) = folder.path() {
                         println!("Carpeta seleccionada: {:?}", path);
 
-                        controlador.borrow_mut().poblar_bd(&path);
-
+                        if let Err(e) = controlador.borrow_mut().poblar_bd(&path) {
+                            println!("Error: {}", e);
+                        }
+                        
                         match controlador
                             .borrow()
                             .obtener_canciones() {
@@ -188,39 +175,8 @@ fn mostrar_dialogo_minero(parent: &ApplicationWindow, controlador: Rc<RefCell<Co
     );
 }
 
-// fn muestra_progreso_minero(parent: &ApplicationWindow, path: &std::path::Path, controlador: Arc<Mutex<Controlador>>) {
-//     let dialogo = gtk::AlertDialog::builder()
-//         .message(&format!("Iniciando minero en: \n{}\n\n....", path.display())).build();
-
-//     let clon_path = path.to_path_buf();
-//     let controlador_clon = controlador.clone();
-//     let dialogo_clon = dialogo.clone();
-//     let parent_clon = parent.clone();
-
-//      std::thread::spawn(move || {
-//         let resultado = {
-//             let mut ctrl = controlador_clon.lock().unwrap();
-//             ctrl.poblar_bd(&clon_path)
-//         };
-
-//         gtk::glib::MainContext::default().invoke(move || {
-//             match resultado {
-//                 Ok(()) => {
-//                     dialogo_clon.set_message("Minero completado");
-//                 }
-//                 Err(e) => {
-//                     dialogo_clon.set_message(&format!("Error:\n{}", e));
-//                 }
-//             }
-//             dialogo_clon.show(Some(&parent_clon));
-//         });
-//     });
-
-//     dialogo.show(Some(parent));
-// }
-
-
-fn crear_panel_reproductor() -> (Box, Button, Button, Button, Label, Scale) {
+//Crea el panel del reproductor del lado derecho de la ventana
+fn crear_panel_reproductor() -> (Box, Button, Label) {
 
     let left_box = Box::new(Orientation::Vertical, 10);
     // left_box.set_margin_all(10);
@@ -268,9 +224,10 @@ fn crear_panel_reproductor() -> (Box, Button, Button, Button, Label, Scale) {
     left_box.append(&buttons_box);
     left_box.append(&spacer_bottom);
     
-    return (left_box, play_button, pause_button, next_button, song_label, progress_bar);
+    return (left_box, play_button, song_label);
 }
 
+//Crea el lado izquierdo de la ventana donde se muestran las canciones que están en la base de datos
 fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button) {
     let right_box = Box::new(Orientation::Vertical, 5);
     
@@ -319,18 +276,7 @@ fn crear_panel_biblioteca() -> (Box, Stack, FlowBox, ColumnView, Button, Button)
     // Agregar vistas al stack
     stack.add_named(&grid_scroll, Some("grid_view"));
     stack.add_named(&table_scroll, Some("table_view"));
-    
-    // // Configurar botones
-    // let stack_clone = stack.clone();
-    // btn_grid.connect_clicked(move |_| {
-    //     stack_clone.set_visible_child_name("grid_view");
-    // });
-
-    // let stack2 = stack.clone();
-    // btn_table.connect_clicked(move |_| {
-    //     stack2.set_visible_child_name("table_view");
-    // });
-    
+        
     // Mostrar vista inicial
     stack.set_visible_child_name("grid_view");
     

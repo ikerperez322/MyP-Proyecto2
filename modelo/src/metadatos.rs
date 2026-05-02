@@ -1,8 +1,4 @@
-
 //structs con los metadatos que sacó el minero y datos por omisión sirven para construir los objetos definidos en entidades/ tomando en cuenta que esos objetos ya deben manejar la información prácticamente como si fueran la base de datos, estos structs son bastante volátiles
-
-use std::u32;
-
 
 //struct que guarda los metadatos que recogió el minero para poder agregar a la base de datos
 #[derive(Debug)]
@@ -15,7 +11,6 @@ pub struct Cancion {
     pub track: Option<i64>,
     pub agno: Option<i64>,
     pub genero: Option<String>,
-    // pub agno_album: Option<i32>,
     //0 persona, 1 grupo, 2 desconocido
     pub tipo_artista: i64,
 }

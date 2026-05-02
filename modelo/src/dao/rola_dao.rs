@@ -1,8 +1,6 @@
 use rusqlite::Connection;
 use std::rc::Rc;
 use crate::rola_vista::RolaVista;
-// use crate::modelo::entidades::rola::Rola;
-
 use crate::entidades::rola::Rola;
 
 pub struct RolaDao {
@@ -16,10 +14,8 @@ impl RolaDao {
 
     //agrega a la tabla rolas, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
     pub fn agregar(&self, rola: &Rola) -> rusqlite::Result<i64> {
-        // println!("Insertando rola...");
         self.conexion.execute("INSERT INTO rolas (id_performer, id_album, path, title, track, year, genre) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
             (&rola.id_performer, &rola.id_album, &rola.path, &rola.title, &rola.track, &rola.year, &rola.genre,),)?;
-        // return Ok(());
         return Ok(self.conexion.last_insert_rowid());
     }
 

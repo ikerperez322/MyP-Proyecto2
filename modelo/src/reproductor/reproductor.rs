@@ -1,4 +1,4 @@
-use std::{io::BufReader, path};
+use std::{io::BufReader};
 use std::fs::File;
 
 use rodio::{Decoder, OutputStream, Sink};
@@ -24,7 +24,6 @@ impl Reproductor {
         let source = Decoder::new(BufReader::new(cancion))?;
 
         self.sink.append(source);
-        // self.sink.sleep_until_end();
         
         return Ok(());
     }

@@ -1,7 +1,6 @@
-use std::rc::Rc;
 use rusqlite::Connection;
 use rusqlite::params;
-// use crate::modelo::entidades::performer::Performer;
+use std::rc::Rc;
 use crate::entidades::performer::Performer;
 
 //dao para tabla performers
@@ -16,7 +15,6 @@ impl PerformerDao {
 
     //agrega a la tabla performer, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
     pub fn agregar(&self, performer: &Performer) -> rusqlite::Result<i64> {
-        // println!("Insertando performer...");
         self.conexion.execute("INSERT INTO performers (id_type, name) VALUES (?1, ?2)",
             (&performer.id_type, &performer.name,),)?;
         return Ok(self.conexion.last_insert_rowid());

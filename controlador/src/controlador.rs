@@ -1,25 +1,18 @@
 use std::path::Path;
 use std::rc::Rc;
-// use rusqlite;
 use rusqlite::Connection;
-use modelo::minero::Minero;
-use modelo::manejador_dao::ManejadorDao;
-use modelo::dao::rola_dao::RolaDao;
-use modelo::reproductor::reproductor::Reproductor;
-// use modelo::minero::Minero;
+use modelo::{manejador_dao::ManejadorDao, dao::rola_dao::RolaDao, reproductor::reproductor::Reproductor, minero::Minero};
 use crate::cancion_vista::CancionVista;
 
 pub struct Controlador {
     conexion: Rc<Connection>,
-    ruta_base_datos: String,
     reproductor: Reproductor,
 }
 
 impl Controlador {
-    pub fn new(conexion: Rc<Connection>, ruta_base_datos: String) -> Self {
+    pub fn new(conexion: Rc<Connection>) -> Self {
         return Self {
             conexion: conexion,
-            ruta_base_datos: ruta_base_datos,
             reproductor: Reproductor::new(),
         };
     }
@@ -38,42 +31,14 @@ CREATE TABLE in_group (id_person INTEGER, id_group INTEGER, PRIMARY KEY   (id_pe
 CREATE TABLE albums (id_album INTEGER PRIMARY KEY, path TEXT, name TEXT, year INTEGER);
 CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album INTEGER, path TEXT, title TEXT, track INTEGER, year INTEGER, genre TEXT, FOREIGN KEY (id_performer) REFERENCES performers(id_performer), FOREIGN KEY (id_album) REFERENCES albums(id_album));
 ";
-
-        // self.conexion.execute("PRAGMA foreign_keys = ON", [])?;
-        
-        // let ruta = Path::new(&self.ruta_base_datos);
-        
         self.conexion.execute_batch(esquema)?;
-
         
-        // println!("Antes de stmt");
-        // let mut stmt = self.conexion.prepare(
-        //     "SELECT name FROM sqlite_master WHERE type='table' AND name='rolas';"
-        // )?;
-
-        // let mut columnas = stmt.query([])?;
-
-        // println!("Antes de columnas.next.is_some");
-        // if columnas.next()?.is_some() {
-        //     return Ok(());
-        // }
-
-        // println!("Después de columnas.next.is_some");
-        
-
-
         return Ok(());
     }
     
     //método para invocar al minero desde la parte del usuario y poblar la base de datos
     pub fn poblar_bd(&self, raiz: &Path) -> Result<(), Box<dyn::std::error::Error>> {
 
-        // let ruta = Path::new(&self.ruta_base_datos);
-        
-        // if !ruta.exists(){
-        //     self.crea_bd()?;
-        // }
-        
         let minero = Minero::new();
         let manejador = ManejadorDao::new(self.conexion.clone());        
         
@@ -83,11 +48,9 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
             match manejador.agrega_rola(&cancion) {
                 Ok(id) => {
                     println!("Insertada canción con id {}", id);
-                    // println!("Canción:\n{:#?}", cancion);
                 },
                 Err(e) => {
                     eprintln!("Error insertando canción: {}", e);
-                    // println!("Canción:\n{:#?}", cancion);
                 },
             }
         }
@@ -114,7 +77,6 @@ CREATE TABLE rolas (id_rola INTEGER PRIMARY KEY, id_performer INTEGER, id_album 
     pub fn reproduce_cancion(&self, path_cancion: &str) -> Result<(), Box<dyn::std::error::Error>> {
         self.reproductor.reproduce_cancion(path_cancion)?;
         return Ok(());
-    }
-    
+    }    
 }
 

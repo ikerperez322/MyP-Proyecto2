@@ -1,6 +1,5 @@
-use std::rc::Rc;
 use rusqlite::Connection;
-// use crate::modelo::entidades::person::Person;
+use std::rc::Rc;
 use crate::entidades::person::Person;
 
 pub struct PersonDao {

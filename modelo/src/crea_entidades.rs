@@ -1,5 +1,5 @@
 use crate::metadatos::{Artista, Cancion};
-use crate::entidades::{performer::Performer, album::Album, person::Person, group::Group, rola::Rola};
+use crate::entidades::{performer::Performer, album::Album, person::Person, group::Group};
 
 pub struct CreaEntidades {
 
@@ -13,8 +13,6 @@ impl CreaEntidades {
             id: None,
             id_type: cancion.tipo_artista,
             name: match &cancion.artista {
-                // Some(art) => art.to_string(),
-                // None => String::from("Desconocido"),
                 Artista::Persona(p) => match &p.nombre_artistico {
                     Some(nombre_artistico) => nombre_artistico.to_string(),
                     None => String::from("Desconocido"),
@@ -109,13 +107,5 @@ impl CreaEntidades {
         };
         return grupo;
     }
-
-    // pub fn crea_rola(&self, cancion: &Cancion) -> Rola {
-    //     let rola = Rola {
-    //         id: None,
-            
-    //     }
-    // }
-    
 }
 

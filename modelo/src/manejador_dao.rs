@@ -1,7 +1,6 @@
-// use crate::modelo::metadatos::{Artista, Cancion};
-use std::rc::Rc;
 use rusqlite::Connection;
-use crate::{dao::{album_dao::AlbumDao, performer_dao::{self, PerformerDao}, rola_dao::RolaDao}, entidades::{album::Album, performer::Performer, rola::Rola}, metadatos::{Artista, Cancion, Grupo, Persona}};
+use std::rc::Rc;
+use crate::{dao::{album_dao::AlbumDao, performer_dao::{PerformerDao}, rola_dao::RolaDao}, entidades::{album::Album, performer::Performer, rola::Rola}, metadatos::{Artista, Cancion, Grupo, Persona}};
 
 //objeto que manipula los daos de dao/ a un alto nivel
 pub struct ManejadorDao {

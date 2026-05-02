@@ -1,7 +1,6 @@
-use std::rc::Rc;
 use rusqlite::Connection;
 use rusqlite::params;
-// use crate::modelo::entidades::album::Album;
+use std::rc::Rc;
 use crate::entidades::album::Album;
 
 pub struct AlbumDao {
@@ -15,7 +14,6 @@ impl AlbumDao {
 
     //agrega a la tabla album, regresa el número de columnas insertadas en caso de éxito, regresa Error en caso de que falle el sql
     pub fn agregar(&self, album: &Album) -> rusqlite::Result<i64> {
-        // println!("Insertando album...");
         self.conexion.execute("INSERT INTO albums (path, name, year) VALUES (?1, ?2, ?3)",
             (&album.path, &album.name, &album.year,),)?;
         return Ok(self.conexion.last_insert_rowid());
